@@ -1,0 +1,40 @@
+---
+export interface Props {
+	title: string
+	subtitle: string
+}
+
+const { subtitle, title } = Astro.props
+---
+
+<h2>
+	{title}
+</h2>
+
+<span>
+	{subtitle}
+</span>
+
+<style>
+	h2 {
+		font-size: var(--h1-font-size);
+		color: var(--title-color);
+	}
+
+	span {
+		display: block;
+		font-size: var(--small-font-size);
+		margin-bottom: var(--mb-3);
+	}
+
+	h2,
+	span {
+		text-align: center;
+	}
+
+	@media screen and (min-width: 768px) {
+		span {
+			margin-bottom: 4rem;
+		}
+	}
+</style>

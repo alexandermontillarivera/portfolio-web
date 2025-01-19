@@ -1,0 +1,12 @@
+---
+import ExperienceCard from "@/components/cards/ExperienceCard.astro"
+import Titles from "@/components/text/Titles.astro"
+import { EXPERIENCE } from "@/data/experience"
+import { SECTIONS } from "@/constants"
+---
+
+<section id={SECTIONS.EXPERIENCE}>
+	<Titles title="Experiencia" subtitle="Mi experiencia laboral" />
+
+	{EXPERIENCE.map((item) => <ExperienceCard data={item} />)}
+</section>

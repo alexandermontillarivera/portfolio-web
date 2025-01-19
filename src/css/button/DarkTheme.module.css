@@ -1,0 +1,18 @@
+.button {
+  background-color: transparent;
+  border: none;
+  transition: opacity 0.3s ease;
+  opacity: 1;
+
+}
+
+.icon {
+  color: var(--title-color);
+}
+
+.button:hover {
+  cursor: pointer;
+  color: var(--first-color);
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}

@@ -1,0 +1,88 @@
+---
+import type SpotifyCurrentPlaying from "@/interfaces/Spotify"
+import Tooltip from "@/components/elements/Tooltip.astro"
+import { getSpotifyCurrentPlayService } from "@/services/spotify"
+import { IconBrandSpotifyFilled } from "@tabler/icons-react"
+
+let song: SpotifyCurrentPlaying | null = null
+
+try {
+	song = await getSpotifyCurrentPlayService()
+} catch {}
+
+const id = crypto.randomUUID()
+---
+
+{
+	song && song.is_playing && (
+		<div class="container">
+			<Tooltip text={`Escuchando ${song.item.name} en Spotify`}>
+				<button class="disc" id={id}>
+					<div class="icon">
+						<IconBrandSpotifyFilled size={45} />
+					</div>
+				</button>
+			</Tooltip>
+		</div>
+	)
+}
+
+<script
+	is:inline
+	define:vars={{
+		id,
+		url: song?.item.external_urls.spotify,
+	}}
+>
+	const button = document.getElementById(id)
+
+	button?.addEventListener("click", () => {
+		window.open(url, "_blank")
+	})
+</script>
+
+<style>
+	.container {
+		position: relative;
+	}
+
+	.icon {
+		width: 45px;
+		height: 45px;
+		color: var(--body-color);
+		background-color: var(--first-color);
+	}
+
+	.disc {
+		width: 2rem;
+		height: 2rem;
+		border-radius: 50%;
+		overflow: hidden;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		position: relative;
+		color: var(--body-color);
+		cursor: pointer;
+		animation: spin 4s linear infinite;
+		background-color: transparent;
+		border: none;
+	}
+
+	.disc:hover {
+		transform: scale(1.1);
+	}
+
+	.container:hover .disc {
+		animation: none;
+	}
+
+	@keyframes spin {
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(360deg);
+		}
+	}
+</style>

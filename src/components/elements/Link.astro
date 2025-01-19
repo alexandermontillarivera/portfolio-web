@@ -1,0 +1,49 @@
+---
+export interface Props {
+	href: string
+	download?: string
+	variant?: "white" | "flex" | "small"
+}
+
+const { href, variant, download } = Astro.props
+---
+
+<a href={href} class={variant} download={download}>
+	<slot />
+</a>
+
+<style>
+	a {
+		display: inline-block;
+		background-color: var(--first-color);
+		color: #fff;
+		padding: 1rem;
+		border-radius: 0.5rem;
+		font-weight: var(--font-medium);
+		transition: background-color 0.3s ease;
+	}
+
+	a:hover {
+		background-color: var(--first-color-alt);
+	}
+
+	.white {
+		background-color: #fff;
+		color: var(--first-color);
+	}
+
+	.white:hover {
+		background-color: #fff;
+	}
+
+	.flex {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		justify-content: center;
+	}
+
+	.mall {
+		padding: 0.75rem 1rem;
+	}
+</style>

@@ -1,0 +1,152 @@
+---
+import Link from "@/components/elements/Link.astro"
+import SpotifyDisc from "@/components/elements/SpotifyDisc.astro"
+import Tooltip from "@/components/elements/Tooltip.astro"
+import { IconDownload } from "@tabler/icons-react"
+import { SOCIAL_MEDIA } from "@/data/hero"
+import { SECTIONS } from "@/constants"
+---
+
+<section id={SECTIONS.HERO}>
+	<div class="container">
+		<div class="social">
+			{
+				SOCIAL_MEDIA.map((item) => (
+					<Tooltip text={`Visitar ${item.name}`}>
+						<a href={item.url} target="_blank" class="socialIcon">
+							<item.icon />
+						</a>
+					</Tooltip>
+				))
+			}
+		</div>
+
+		<div class="information">
+			<h1>Hola, Soy Alexander Montilla</h1>
+			<h3>Full Stack Developer</h3>
+			<p>
+				Apasionado por la tecnología y metodologías ágiles en el mundo del
+				desarrollo y con ciertos conceptos del mundo multimedia. Soy full stack
+				developer y me mantengo en un constante aprendizaje para aumentar mi
+				capacidad de resolver problemas, tanto del ámbito personal y
+				profesional.
+			</p>
+
+			<div class="cvContainer">
+				<Link href="/cv.pdf" download="cv.pdf" variant="flex">
+					Descargar CV <IconDownload />
+				</Link>
+			</div>
+		</div>
+	</div>
+
+	<div class="image">
+		<svg viewBox="0 0 200 187" style="width: 300px; fill: var(--first-color);">
+			<mask id="mask0" mask-type="alpha">
+				<path
+					d="M190.312 36.4879C206.582 62.1187 201.309 102.826 182.328 134.186C163.346 165.547 
+                    130.807 187.559 100.226 186.353C69.6454 185.297 41.0228 161.023 21.7403 129.362C2.45775 
+                    97.8511 -7.48481 59.1033 6.67581 34.5279C20.9871 10.1032 59.7028 -0.149132 97.9666 
+                    0.00163737C136.23 0.303176 174.193 10.857 190.312 36.4879Z"
+				></path>
+			</mask>
+			<g mask="url(#mask0)">
+				<path
+					d="M190.312 36.4879C206.582 62.1187 201.309 102.826 182.328 134.186C163.346 
+             165.547 130.807 187.559 100.226 186.353C69.6454 185.297 41.0228 161.023 21.7403 
+             129.362C2.45775 97.8511 -7.48481 59.1033 6.67581 34.5279C20.9871 10.1032 59.7028 
+             -0.149132 97.9666 0.00163737C136.23 0.303176 174.193 10.857 190.312 36.4879Z"
+				></path>
+				<image x="12" y="18" href="/me.png" />
+			</g>
+		</svg>
+
+		<div class="spotifyContainer">
+			<SpotifyDisc server:defer />
+		</div>
+	</div>
+</section>
+
+<style>
+	section {
+		align-items: center;
+		display: flex;
+		gap: var(--gap-4);
+	}
+
+	image {
+		width: 170px;
+		height: 170px;
+	}
+
+	h1 {
+		font-size: var(--big-font-size);
+	}
+
+	h3 {
+		font-size: var(--h3-font-size);
+		color: var(--text-color);
+		font-weight: var(--font-medium);
+		margin-bottom: var(--mb-0-75);
+	}
+
+	.container {
+		display: flex;
+		gap: var(--gap-4);
+		justify-content: space-between;
+		width: 100%;
+		align-items: center;
+	}
+
+	.social {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: var(--gap-1);
+	}
+
+	.image {
+		position: relative;
+	}
+
+	.spotifyContainer {
+		position: absolute;
+		right: 2rem;
+		top: calc(50% - 1rem);
+	}
+
+	.socialIcon {
+		font-size: 1.25rem;
+		color: var(--first-color);
+	}
+
+	.socialIcon:hover {
+		color: var(--first-color-alt);
+	}
+
+	.cvContainer {
+		margin-top: var(--mb-0-75);
+	}
+
+	@media screen and (max-width: 998px) {
+		section {
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			padding-top: 2rem;
+		}
+
+		.image {
+			order: 1;
+		}
+
+		.container {
+			order: 2;
+			flex-direction: column;
+		}
+
+		.social {
+			flex-direction: row;
+		}
+	}
+</style>

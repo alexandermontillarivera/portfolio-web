@@ -1,0 +1,352 @@
+---
+import { ButtonDarkTheme } from "@/components/button/DarkTheme"
+import { IconCategory, IconX } from "@tabler/icons-react"
+import { MENU } from "@/data/menu"
+---
+
+<header>
+	<nav class="nav">
+		<a href="#" class="navLogo">Alexander Montilla Rivera</a>
+		<div class="navMenu" id="topNav">
+			<ul class="navList">
+				{
+					MENU.map((item) => (
+						<li class="navItem">
+							<a href={item.href} class="navLink" data-id={item.href}>
+								<div class="navIcon">
+									<item.icon />
+								</div>
+								{item.text}
+							</a>
+						</li>
+					))
+				}
+			</ul>
+
+			<button class="navClose" id="navClose">
+				<IconX />
+			</button>
+		</div>
+
+		<div class="navBtns">
+			<ButtonDarkTheme client:only="react" />
+			<div class="navToggle">
+				<button class="button" id="buttonMenu">
+					<IconCategory />
+				</button>
+			</div>
+		</div>
+	</nav>
+</header>
+
+<script is:inline lang="ts">
+	document.addEventListener("DOMContentLoaded", () => {
+		const buttonMenu = document.getElementById("buttonMenu")
+		const navClose = document.getElementById("navClose")
+		const menuRoot = document.getElementById("topNav")
+		const menuLinks = menuRoot.querySelectorAll("a")
+		const blurOverlay = document.getElementById("blurOverlay")
+		const contentWrapper = document.querySelector(".content-wrapper")
+
+		const handleIntersection = (entries) => {
+			entries.forEach((entry) => {
+				const id = entry.target.id
+				const menuLink = document.querySelector(`#topNav a[data-id="#${id}"]`)
+
+				if (entry.isIntersecting) {
+					menuLinks.forEach((link) => link.classList.remove("active"))
+					menuLink?.classList.add("active")
+				}
+			})
+		}
+
+		const observer = new IntersectionObserver(handleIntersection, {
+			threshold: 0.6,
+		})
+
+		const sections = document.querySelectorAll("section")
+		sections.forEach((section) => observer.observe(section))
+
+		const header = document.querySelector("header")
+
+		const handleScroll = () => {
+			if (!header) return
+
+			const scroll = window.scrollY
+			if (scroll >= 10) {
+				header.classList.add("scrollShadow")
+				return
+			}
+			header.classList.remove("scrollShadow")
+		}
+
+		const handleMenu = () => {
+			const isMobile = window.matchMedia("(max-width: 998px)").matches
+			if (!isMobile) return
+
+			if (menuRoot.classList.contains("showMenu")) {
+				menuRoot.classList.remove("showMenu")
+				menuRoot.classList.add("transition-exit")
+				blurOverlay.classList.remove("active")
+				contentWrapper.classList.remove("blur-content")
+
+				menuRoot.addEventListener(
+					"transitionend",
+					() => {
+						menuRoot.classList.remove("transition-exit")
+					},
+					{ once: true },
+				)
+			} else {
+				menuRoot.classList.add("showMenu")
+				blurOverlay.classList.add("active")
+				contentWrapper.classList.add("blur-content")
+			}
+
+			document.body.style.overflow = menuRoot.classList.contains("showMenu")
+				? "hidden"
+				: ""
+			buttonMenu.style.opacity = menuRoot.classList.contains("showMenu")
+				? "0"
+				: "1"
+		}
+
+		const handleClickOutside = (event) => {
+			if (
+				!menuRoot.contains(event.target) &&
+				!buttonMenu.contains(event.target)
+			) {
+				if (menuRoot.classList.contains("showMenu")) {
+					menuRoot.classList.remove("showMenu")
+					menuRoot.classList.add("transition-exit")
+					blurOverlay.classList.remove("active")
+					contentWrapper.classList.remove("blur-content")
+
+					menuRoot.addEventListener(
+						"transitionend",
+						() => {
+							menuRoot.classList.remove("transition-exit")
+						},
+						{ once: true },
+					)
+
+					document.body.style.overflow = ""
+					buttonMenu.style.opacity = "1"
+				}
+			}
+		}
+
+		buttonMenu.addEventListener("click", handleMenu)
+		window.addEventListener("scroll", handleScroll)
+		navClose.addEventListener("click", handleMenu)
+		menuLinks.forEach((link) => link.addEventListener("click", handleMenu))
+		document.addEventListener("click", handleClickOutside)
+	})
+</script>
+
+<style>
+	button {
+		background-color: transparent;
+		border: none;
+		transition: all 0.3s ease;
+		opacity: 1;
+		color: var(--title-color);
+	}
+
+	button:hover {
+		cursor: pointer;
+		color: var(--first-color);
+		opacity: 0.7;
+	}
+
+	header {
+		position: sticky;
+		top: 0;
+		background-color: var(--body-color);
+		z-index: 100;
+	}
+
+	nav {
+		max-width: 1200px;
+		height: var(--header-height);
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin: 0px auto;
+	}
+
+	.navLogo,
+	.navToggle {
+		color: var(--title-color);
+		font-weight: var(--font-medium);
+	}
+
+	.navLogo:hover {
+		color: var(--first-color);
+	}
+
+	.navToggle {
+		font-size: 1.1rem;
+		cursor: pointer;
+	}
+
+	.scrollShadow {
+		box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.15);
+	}
+
+	.navLink.active {
+		color: var(--first-color);
+	}
+
+	body.darkTheme .scrollShadow {
+		box-shadow: 0 -1px 4px rgba(255, 252, 252, 0.25);
+	}
+
+	@media screen and (max-width: 1248px) {
+		nav {
+			padding: 0px 2rem;
+		}
+	}
+
+	@media screen and (max-width: 998px) {
+		header {
+			position: fixed;
+			top: unset;
+			bottom: 0;
+			width: 100%;
+			border-top: 1px solid var(--border-color);
+		}
+
+		.navMenu {
+			position: fixed;
+			bottom: -100%;
+			left: 0;
+			width: 100%;
+			background-color: var(--body-color);
+			padding: 2rem 1.5rem 4rem;
+			box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.15);
+			border-radius: 1.5rem 1.5rem 0 0;
+			transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			transform: translateY(100%);
+			opacity: 0;
+			z-index: 99;
+		}
+
+		nav {
+			padding: 0px 1em;
+			height: calc(var(--header-height) + 1.5rem);
+		}
+
+		.navBtns {
+			display: flex;
+			gap: var(--gap-1);
+			align-items: center;
+		}
+
+		.navBtns div {
+			display: flex;
+		}
+
+		.navClose {
+			color: var(--first-color);
+			margin-top: 4rem;
+			background-color: var(--constras-color);
+			margin: 0px auto;
+			max-width: fit-content;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			border-radius: 50%;
+			padding: 0.5rem;
+			width: 40px;
+			height: 40px;
+		}
+
+		.showMenu .navClose {
+			bottom: calc(100vh - 4rem);
+		}
+	}
+
+	.navList {
+		grid-template-columns: repeat(3, 1fr);
+		gap: 2rem;
+	}
+
+	.navLink {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		font-size: var(--small-font-size);
+		color: var(--title-color);
+		font-weight: var(--font-medium);
+		transition: color 0.3s ease;
+	}
+
+	.navLink:hover {
+		color: var(--first-color);
+	}
+
+	.navIcon {
+		font-size: 1.2rem;
+	}
+
+	.navClose:hover {
+		color: var(--first-color-alt);
+		transform: scale(1.1);
+	}
+
+	@media screen and (max-width: 350px) {
+		.navMenu {
+			padding: 2rem 0.25rem 4rem;
+		}
+
+		.navList {
+			column-gap: 0;
+		}
+	}
+
+	@media screen and (min-width: 998px) {
+		nav {
+			height: calc(var(--header-height) + 1.5rem);
+			column-gap: 1rem;
+		}
+
+		.navIcon,
+		.navClose,
+		.navToggle {
+			display: none;
+		}
+
+		.navList {
+			display: flex;
+			column-gap: var(--gap-2);
+		}
+
+		.navMenu {
+			margin-left: auto;
+		}
+	}
+
+	.showMenu {
+		bottom: 0 !important;
+		transform: translateY(0) !important;
+		opacity: 1 !important;
+	}
+
+	.showMenu ul {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+		margin-bottom: 4rem;
+	}
+
+	.navMenu.transition-exit {
+		transform: translateY(100%);
+		opacity: 0;
+		transition:
+			transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+			opacity 0.3s ease;
+	}
+</style>

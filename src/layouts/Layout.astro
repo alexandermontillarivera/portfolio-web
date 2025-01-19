@@ -1,22 +1,241 @@
+---
+import dayjs from "dayjs"
+import "@fontsource/poppins"
+import Menu from "@/components/nav/Menu.astro"
+import { THEME_STORAGE_NAME, THEME, DARK_THEME_CLASS_NAME } from "@/constants"
+---
+
 <!doctype html>
-<html lang="en">
+<html lang="es">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" type="image/png" href="/favicon.png" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+		<title>Alexander Montilla Rivera</title>
 	</head>
 	<body>
-		<slot />
+		<script define:vars={{ THEME_STORAGE_NAME, THEME, DARK_THEME_CLASS_NAME }}>
+			const theme = (() => {
+				const currentTheme = localStorage.getItem(THEME_STORAGE_NAME)
+
+				if (currentTheme) {
+					return currentTheme
+				}
+
+				return window.matchMedia("(prefers-color-scheme: dark)").matches
+					? THEME.DARK
+					: THEME.LIGHT
+			})()
+
+			if (theme === THEME.DARK) {
+				document.body.classList.add(DARK_THEME_CLASS_NAME)
+			}
+		</script>
+
+		<Menu />
+
+		<div class="content-wrapper">
+			<main>
+				<slot />
+			</main>
+		</div>
+
+		<div class="blur-overlay" id="blurOverlay"></div>
 	</body>
 </html>
 
-<style>
-	html,
-	body {
+<style is:global>
+	:root {
+		--header-height: 3rem;
+		--hue-color: 28;
+		--first-color: hsl(var(--hue-color), 69%, 61%);
+		--first-color-second: hsl(var(--hue-color), 69%, 61%);
+		--first-color-alt: hsl(var(--hue-color), 57%, 53%);
+		--first-color-lighter: hsl(var(--hue-color), 92%, 85%);
+		--title-color: hsl(var(--hue-color), 8%, 15%);
+		--text-color: hsl(var(--hue-color), 8%, 45%);
+		--text-color-light: hsl(var(--hue-color), 8%, 65%);
+		--input-color: hsl(var(--hue-color), 70%, 96%);
+		--body-color: hsl(var(--hue-color), 60%, 99%);
+		--border-color: hsl(180deg 1% 80% / 25%);
+		--container-color: #fff;
+		--scroll-bar-color: hsl(var(--hue-color), 12%, 90%);
+		--scroll-thumb-color: hsl(var(--hue-color), 12%, 80%);
+		--body-font: "Poppins", sans-serif;
+		--big-font-size: 2rem;
+		--h1-font-size: 1.5rem;
+		--h2-font-size: 1.25rem;
+		--h3-font-size: 1.125rem;
+		--normal-font-size: 0.938rem;
+		--small-font-size: 0.9rem;
+		--gap-1: 1rem;
+		--gap-2: 2rem;
+		--gap-3: 3rem;
+		--gap-4: 4rem;
+		--smaller-font-size: 0.75rem;
+		--font-medium: 500;
+		--font-semi-bold: 600;
+		--mb-0-25: 0.25rem;
+		--mb-0-5: 0.5rem;
+		--mb-0-75: 0.75rem;
+		--mb-1: 1rem;
+		--mb-1-5: 1.5rem;
+		--mb-2: 2rem;
+		--mb-2-5: 2.5rem;
+		--mb-3: 3rem;
+		--z-tooltip: 10;
+		--z-fixed: 100;
+		--z-modal: 1000;
+		--constras-color: hsl(28deg 100% 93.14% / 41%);
+		--box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+		--box-shadow-hover: 0 0 10px rgba(0, 0, 0, 0.1);
+	}
+
+	@media screen and (min-width: 968px) {
+		:root {
+			--big-font-size: 3rem;
+			--h1-font-size: 2.25rem;
+			--h2-font-size: 1.5rem;
+			--h3-font-size: 1.25rem;
+			--normal-font-size: 1rem;
+			--small-font-size: 0.875rem;
+			--smaller-font-size: 0.813rem;
+		}
+	}
+
+	body.darkTheme {
+		--first-color-second: hsl(var(--hue-color), 30%, 8%);
+		--title-color: hsl(var(--hue-color), 8%, 95%);
+		--text-color: hsl(var(--hue-color), 8%, 75%);
+		--input-color: hsl(var(--hue-color), 29%, 16%);
+		--body-color: hsl(var(--hue-color), 28%, 12%);
+		--container-color: hsl(var(--hue-color), 29%, 16%);
+		--scroll-bar-color: hsl(var(--hue-color), 12%, 48%);
+		--scroll-thumb-color: hsl(var(--hue-color), 12%, 36%);
+		--border-color: hsla(180, 2%, 80%, 0.192);
+		--constras-color: hsl(28deg 26.22% 20.41%);
+	}
+
+	@supports selector(::-webkit-scrollbar) {
+		@media (hover: hover) {
+			::-webkit-scrollbar {
+				width: 10px;
+				border-radius: 10px;
+			}
+
+			::-webkit-scrollbar-thumb {
+				border-radius: 10px;
+				background-color: #888;
+				border: 2px solid transparent;
+				background-clip: content-box;
+			}
+
+			::-webkit-scrollbar-thumb:active {
+				background-color: #666;
+			}
+		}
+	}
+
+	@supports not selector(::-webkit-scrollbar) {
+		* {
+			scrollbar-color: #888 transparent;
+			scrollbar-width: thin;
+		}
+	}
+
+	* {
+		box-sizing: border-box;
+		padding: 0;
 		margin: 0;
+	}
+
+	html {
+		scroll-behavior: smooth;
+	}
+
+	body {
+		margin: 0 0 var(--header-height) 0;
+		font-family: var(--body-font);
+		font-size: var(--normal-font-size);
+		background-color: var(--body-color);
+		color: var(--text-color);
+	}
+
+	h1,
+	h2,
+	h3,
+	h4 {
+		color: var(--title-color);
+		font-weight: var(--font-semi-bold);
+	}
+
+	ul {
+		list-style: none;
+	}
+
+	a {
+		text-decoration: none;
+	}
+
+	img {
+		max-width: 100%;
+		height: auto;
+	}
+
+	main {
+		display: block;
+		margin: 0 auto;
+		max-width: 1200px;
+		padding: 0px;
+	}
+
+	section {
+		min-height: 100vh;
+		padding-top: 100px;
+	}
+
+	section:first-child {
+		padding-top: 0px;
+	}
+
+	@media screen and (max-width: 1248px) {
+		main {
+			padding: 0px 2rem;
+		}
+	}
+
+	.content-wrapper {
+		transition: filter 0.4s ease;
+		min-height: 100vh;
+		position: relative;
+		z-index: 1;
+		overflow: hidden;
+	}
+
+	.blur-content {
+		filter: blur(8px);
+		pointer-events: none;
+	}
+
+	.blur-overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
 		width: 100%;
 		height: 100%;
+		background-color: rgba(0, 0, 0, 0.6);
+		backdrop-filter: blur(8px);
+		z-index: 98;
+		opacity: 0;
+		visibility: hidden;
+		transition:
+			opacity 0.4s ease,
+			visibility 0.4s ease;
+	}
+
+	.blur-overlay.active {
+		opacity: 1;
+		visibility: visible;
 	}
 </style>
