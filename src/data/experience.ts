@@ -43,9 +43,9 @@ export const EXPERIENCE: IExperience[] = [
 		technologies: ["WordPress", "PHP", "CSS", "HTML", "JavaScript"],
 		title: "Web Master",
 		achievement: `
-        Logre darle visibilidad a una empresa de enseñanza de inglés en línea,
-        la cual no contaba con un sitio web. Este se utilizaba como enlace
-        y medio de contacto con los clientes.
-      `,
+      Desarrollé la presencia en línea de una empresa de enseñanza de inglés que no contaba con un sitio web. 
+      Creé un portal que sirvió como punto de contacto y enlace directo con sus clientes, aumentando significativamente 
+      su visibilidad y accesibilidad.
+    `,
 	},
 ]

@@ -1,0 +1,52 @@
+---
+interface Props {
+	justifyContent?: "space-between" | "space-around" | "center" | "start" | "end"
+	columnMinWidth?: string
+	columnMaxWidth?: string
+	gap?: string
+}
+
+const {
+	justifyContent = "space-between",
+	columnMinWidth = "49%",
+	columnMaxWidth = "1fr",
+	gap = "24px",
+} = Astro.props
+---
+
+<div
+	class="auto-grid"
+	style={`
+  --column-min-width: ${columnMinWidth};
+  --column-max-width: ${columnMaxWidth};
+  --grid-gap: ${gap};
+  --justify: ${justifyContent};
+`}
+>
+	<slot />
+</div>
+
+<style>
+	.auto-grid {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+		max-width: 100%;
+		gap: var(--grid-gap);
+		justify-content: center;
+	}
+
+	@media (min-width: 998px) {
+		.auto-grid {
+			display: grid;
+			grid-template-columns: repeat(
+				auto-fit,
+				minmax(
+					calc(var(--column-min-width) - var(--grid-gap)),
+					var(--column-max-width)
+				)
+			);
+			justify-content: var(--justify);
+		}
+	}
+</style>

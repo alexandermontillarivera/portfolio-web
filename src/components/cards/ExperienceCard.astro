@@ -1,6 +1,8 @@
 ---
 import dayjs from "dayjs"
-import type { IExperience } from "@/interfaces/Experience"
+import { FORMAT_DATE_EXPERIENCE } from "@/constants"
+import { type IExperience } from "@/interfaces/Experience"
+import { convertFirstLetterToUppercase } from "@/utils/string"
 
 interface Props {
 	data: IExperience
@@ -16,9 +18,9 @@ const {
 	responsibilities,
 } = Astro.props.data
 
-const formatedStartDate = dayjs(startDate).format("MMMM YYYY")
+const formatedStartDate = dayjs(startDate).format(FORMAT_DATE_EXPERIENCE)
 const formattedEndDate = endDate
-	? dayjs(endDate).format("MMMM YYYY")
+	? dayjs(endDate).format(FORMAT_DATE_EXPERIENCE)
 	: "Presente"
 ---
 
@@ -29,7 +31,8 @@ const formattedEndDate = endDate
 			<p>{company}</p>
 		</div>
 		<span class="duration">
-			{formatedStartDate} - {formattedEndDate}
+			{convertFirstLetterToUppercase(formatedStartDate)} -
+			{convertFirstLetterToUppercase(formattedEndDate)}
 		</span>
 	</header>
 	<div class="card-content">
@@ -42,7 +45,7 @@ const formattedEndDate = endDate
 		{
 			achievement && (
 				<div class="achievement">
-					<h3>Logros:</h3>
+					<h3>Logro:</h3>
 					<p>{achievement}</p>
 				</div>
 			)
@@ -61,7 +64,7 @@ const formattedEndDate = endDate
 		background-color: var(--container-color);
 		border-radius: 8px;
 		box-shadow: var(--box-shadow);
-		max-width: 600px;
+		width: 100%;
 		transition: box-shadow 0.3s ease;
 	}
 
