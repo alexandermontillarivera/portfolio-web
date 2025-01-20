@@ -1,0 +1,15 @@
+---
+import EducationCard from "@/components/cards/EducationCard.astro"
+import AutoGrid from "@/components/box/AutoGrid.astro"
+import Titles from "@/components/text/Titles.astro"
+import { EDUCATION } from "@/data/education"
+import { SECTIONS } from "@/constants"
+---
+
+<section id={SECTIONS.EDUCATION}>
+	<Titles title="Educación" subtitle="Mi formación académica" />
+
+	<AutoGrid>
+		{EDUCATION.map((item) => <EducationCard data={item} />)}
+	</AutoGrid>
+</section>

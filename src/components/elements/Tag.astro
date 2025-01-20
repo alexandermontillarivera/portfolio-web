@@ -1,4 +1,12 @@
-<span>
+---
+export interface Props {
+	class?: string
+}
+
+const { class: className } = Astro.props
+---
+
+<span class:list={[className]}>
 	<slot />
 </span>
 
@@ -8,5 +16,7 @@
 		padding: 0.25rem 0.5rem;
 		border-radius: 4px;
 		font-size: 0.75rem;
+		max-width: fit-content;
+		height: fit-content;
 	}
 </style>
