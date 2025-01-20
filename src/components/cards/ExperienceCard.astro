@@ -1,5 +1,6 @@
 ---
 import dayjs from "dayjs"
+import Tag from "@/components/elements/Tag.astro"
 import { FORMAT_DATE_EXPERIENCE } from "@/constants"
 import { type IExperience } from "@/interfaces/Experience"
 import { convertFirstLetterToUppercase } from "@/utils/string"
@@ -53,7 +54,13 @@ const formattedEndDate = endDate
 		<footer class="technologies">
 			<h3>Lenguajes y tecnologías:</h3>
 			<ul>
-				{technologies.map((tech) => <li>{tech}</li>)}
+				{
+					technologies.map((tech) => (
+						<li>
+							<Tag>{tech}</Tag>
+						</li>
+					))
+				}
 			</ul>
 		</footer>
 	</div>
@@ -142,13 +149,6 @@ const formattedEndDate = endDate
 		gap: var(--gap-1);
 		list-style-type: none;
 		padding-left: 0;
-	}
-
-	.technologies li {
-		background-color: var(--constras-color);
-		padding: 0.25rem 0.5rem;
-		border-radius: 4px;
-		font-size: 0.75rem;
 	}
 
 	.achievement {

@@ -1,0 +1,85 @@
+---
+import Tag from "@/components/elements/Tag.astro"
+import { type IProject } from "@/interfaces/Project"
+import { IconArrowRight } from "@tabler/icons-react"
+
+interface Props {
+	data: IProject
+}
+
+const { title, description, technologies, image, url } = Astro.props.data
+---
+
+<a href={url} class="project-card" target="_blank">
+	<header class="image-container">
+		<img src={image} alt={title} loading="lazy" />
+	</header>
+	<div class="content">
+		<h3>{title}</h3>
+		<p class="description">{description}</p>
+		<div class="technologies">
+			{technologies.map((tech) => <Tag>{tech}</Tag>)}
+		</div>
+	</div>
+</a>
+
+<style>
+	.project-card {
+		display: block;
+		background-color: var(--container-color);
+		border-radius: 12px;
+		overflow: hidden;
+		box-shadow: var(--box-shadow);
+		transition:
+			transform 0.3s ease,
+			box-shadow 0.3s ease;
+		text-decoration: none;
+		color: inherit;
+	}
+
+	.project-card:hover {
+		transform: translateY(-5px);
+		box-shadow: var(--box-shadow-hover);
+	}
+
+	.image-container {
+		width: 100%;
+		height: 350px;
+		overflow: hidden;
+	}
+
+	.image-container img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transition: transform 0.3s ease;
+	}
+
+	.project-card:hover .image-container img {
+		transform: scale(1.05);
+	}
+
+	.content {
+		padding: 1.5rem;
+	}
+
+	h3 {
+		margin: 0;
+		font-size: 1.5rem;
+		color: var(--first-color);
+		margin-bottom: 0.75rem;
+	}
+
+	.description {
+		color: var(--text-color);
+		margin-bottom: 1rem;
+		line-height: 1.5;
+	}
+
+	.technologies {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin-bottom: 1rem;
+	}
+</style>

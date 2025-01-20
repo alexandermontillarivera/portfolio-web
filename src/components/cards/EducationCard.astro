@@ -1,0 +1,109 @@
+---
+interface Props {
+	title: string
+	institution: string
+	year: string
+	skills: string[]
+	certificateUrl: string
+}
+
+const { title, institution, year, skills, certificateUrl } = Astro.props
+---
+
+<div class="education-card">
+	<h3 class="title">{title}</h3>
+	<div class="institution-info">
+		<span class="institution">{institution}</span>
+		<span class="year">{year}</span>
+	</div>
+	<div class="skills-section">
+		<h4>Habilidades adquiridas:</h4>
+		<ul>
+			{skills.map((skill) => <li>{skill}</li>)}
+		</ul>
+	</div>
+	<a href={certificateUrl} class="download-btn" download>
+		Descargar Certificado
+	</a>
+</div>
+
+<style>
+	.education-card {
+		background: #ffffff;
+		border-radius: 12px;
+		padding: 1.5rem;
+		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+		max-width: 400px;
+		margin: 1rem;
+	}
+
+	.title {
+		color: #2d3748;
+		font-size: 1.5rem;
+		font-weight: 700;
+		margin: 0 0 1rem 0;
+	}
+
+	.institution-info {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 1rem;
+	}
+
+	.institution {
+		color: #4a5568;
+		font-weight: 600;
+	}
+
+	.year {
+		color: #718096;
+		font-size: 0.9rem;
+	}
+
+	.skills-section {
+		margin: 1rem 0;
+	}
+
+	.skills-section h4 {
+		color: #4a5568;
+		margin-bottom: 0.5rem;
+		font-size: 1rem;
+	}
+
+	.skills-section ul {
+		list-style-type: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	.skills-section li {
+		color: #718096;
+		padding: 0.25rem 0;
+		position: relative;
+		padding-left: 1.5rem;
+	}
+
+	.skills-section li:before {
+		content: "•";
+		color: #4299e1;
+		position: absolute;
+		left: 0.5rem;
+	}
+
+	.download-btn {
+		display: inline-block;
+		background: #4299e1;
+		color: white;
+		padding: 0.75rem 1.5rem;
+		border-radius: 6px;
+		text-decoration: none;
+		font-weight: 600;
+		transition: background 0.3s ease;
+		margin-top: 1rem;
+	}
+
+	.download-btn:hover {
+		background: #3182ce;
+	}
+</style>

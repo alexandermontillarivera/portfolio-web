@@ -1,0 +1,15 @@
+---
+import ProjectCard from "@/components/cards/ProjectCard.astro"
+import AutoGrid from "@/components/box/AutoGrid.astro"
+import Titles from "@/components/text/Titles.astro"
+import { PROJECTS } from "@/data/project"
+import { SECTIONS } from "@/constants"
+---
+
+<section id={SECTIONS.PROJECTS}>
+	<Titles title="Proyectos" subtitle="Algunos de mis proyectos personales" />
+
+	<AutoGrid>
+		{PROJECTS.map((item) => <ProjectCard data={item} />)}
+	</AutoGrid>
+</section>
