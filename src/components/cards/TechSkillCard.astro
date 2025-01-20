@@ -1,0 +1,47 @@
+---
+import { ITechSkill } from "@/interfaces/TechSkill"
+
+export interface Props {
+	data: ITechSkill
+}
+
+const { icon: Icon, name, type, web } = Astro.props.data
+---
+
+<a target="_blank" referrerpolicy="no-referrer" href={web} data-type={type}>
+	<Icon size={80} strokeWidth={1.2} />
+	<p>{name}</p>
+</a>
+
+<style>
+	a {
+		background-color: var(--container-color);
+		border-radius: 8px;
+		color: var(--text-color);
+		padding: 1rem;
+		width: 150px;
+		height: 150px;
+		cursor: pointer;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		box-shadow: var(--box-shadow);
+		transition:
+			transform 0.3s ease,
+			color 0.3s ease,
+			box-shadow 0.3s ease;
+	}
+
+	a:hover {
+		transform: scale(1.05);
+		color: var(--first-color);
+		box-shadow: var(--box-shadow-hover);
+	}
+
+	p {
+		margin-top: 0.5rem;
+		font-size: 0.9rem;
+		text-align: center;
+	}
+</style>

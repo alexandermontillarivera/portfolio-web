@@ -1,0 +1,132 @@
+---
+import Titles from "@/components/text/Titles.astro"
+import Tooltip from "@/components/elements/Tooltip.astro"
+import TechSkillCard from "@/components/cards/TechSkillCard.astro"
+import { TECH_SKILL_TYPE } from "@/interfaces/TechSkill"
+import { TECH_SKILLS } from "@/data/skills"
+import { SECTIONS } from "@/constants"
+
+const list = Object.values(TECH_SKILL_TYPE)
+const sortedItemsRandomly = TECH_SKILLS.sort(() => Math.random() - 0.5)
+---
+
+<section id={SECTIONS.SKILLS}>
+	<Titles title="Habilidades" subtitle="Mis habilidades técnicas y blandas" />
+
+	<menu>
+		{
+			list.map((item) => (
+				<Tooltip text="Filtrar por habilidad">
+					<button
+						data-filter={item}
+						class:list={[{ active: item === TECH_SKILL_TYPE.ALL }]}
+					>
+						{item}
+					</button>
+				</Tooltip>
+			))
+		}
+	</menu>
+
+	<div class="skills-container">
+		{sortedItemsRandomly.map((item) => <TechSkillCard data={item} />)}
+	</div>
+</section>
+
+<style>
+	.skills-container {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		margin: 0 auto;
+		gap: 24px;
+	}
+
+	menu {
+		display: flex;
+		justify-content: center;
+		gap: 8px;
+		flex-wrap: wrap;
+		margin-bottom: 40px;
+	}
+
+	button {
+		background-color: var(--constras-color);
+		color: var(--text-color);
+		border: none;
+		padding: 8px 16px;
+		border-radius: 8px;
+		font-weight: 600;
+		cursor: pointer;
+		transition: background-color 0.3s ease;
+	}
+
+	button.active {
+		background-color: var(--first-color);
+		color: #fff;
+	}
+
+	@media screen and (max-width: 400px) {
+		.skills-container {
+			justify-content: center;
+		}
+	}
+
+	:global([data-type]) {
+		transition: all 0.5s ease;
+	}
+
+	:global([data-type].dim) {
+		opacity: 0.3;
+		transform: scale(0.95);
+	}
+</style>
+
+<script>
+	const TECH_SKILL_TYPE = {
+		ALL: "Todas",
+		FRONTEND: "Frontend",
+		BACKEND: "Backend",
+		DATABASE: "Database",
+		DEVOPS: "DevOps",
+		TESTING: "Testing",
+		CLOUD: "Cloud",
+		TOOL: "Herramienta",
+		AI: "IA",
+	}
+
+	const initFilter = () => {
+		const buttons = document.querySelectorAll("button[data-filter]")
+		const items = document.querySelectorAll("[data-type]")
+
+		buttons.forEach((button) => {
+			button.addEventListener("click", () => {
+				buttons.forEach((btn) => btn.classList.remove("active"))
+				button.classList.add("active")
+
+				const filterValue = button.getAttribute("data-filter")
+
+				items.forEach((item) => {
+					const itemType = item.getAttribute("data-type")
+
+					if (filterValue === TECH_SKILL_TYPE.ALL) {
+						item.classList.remove("dim")
+						return
+					}
+
+					if (filterValue !== TECH_SKILL_TYPE.ALL && filterValue !== itemType) {
+						item.classList.add("dim")
+						return
+					}
+
+					if (filterValue === itemType) {
+						item.classList.remove("dim")
+					}
+				})
+			})
+		})
+	}
+
+	document.addEventListener("astro:page-load", initFilter)
+	initFilter()
+</script>

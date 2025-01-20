@@ -4,6 +4,7 @@ interface Props {
 	columnMinWidth?: string
 	columnMaxWidth?: string
 	gap?: string
+	id?: string
 }
 
 const {
@@ -11,10 +12,12 @@ const {
 	columnMinWidth = "49%",
 	columnMaxWidth = "1fr",
 	gap = "24px",
+	id,
 } = Astro.props
 ---
 
 <div
+	id={id}
 	class="auto-grid"
 	style={`
   --column-min-width: ${columnMinWidth};
