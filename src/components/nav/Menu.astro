@@ -4,40 +4,44 @@ import { IconCategory, IconX } from "@tabler/icons-react"
 import { MENU } from "@/data/menu"
 ---
 
-<header>
-	<nav class="nav">
-		<a href="#" class="navLogo">Alexander Montilla Rivera</a>
-		<div class="navMenu" id="topNav">
-			<ul class="navList">
-				{
-					MENU.map((item) => (
-						<li class="navItem">
-							<a href={item.href} class="navLink" data-id={item.href}>
-								<div class="navIcon">
-									<item.icon />
-								</div>
-								{item.text}
-							</a>
-						</li>
-					))
-				}
-			</ul>
+<div class="header-wrapper">
+	<header>
+		<nav class="nav">
+			<a href="#" class="navLogo">Alexander Montilla Rivera</a>
+			<div class="navMenu" id="topNav">
+				<ul class="navList">
+					{
+						MENU.map((item) => (
+							<li class="navItem">
+								<a href={item.href} class="navLink" data-id={item.href}>
+									<div class="navIcon">
+										<item.icon />
+									</div>
+									{item.text}
+								</a>
+							</li>
+						))
+					}
+				</ul>
 
-			<button class="navClose" id="navClose">
-				<IconX />
-			</button>
-		</div>
-
-		<div class="navBtns">
-			<ButtonDarkTheme client:only="react" />
-			<div class="navToggle">
-				<button class="button" id="buttonMenu">
-					<IconCategory />
+				<button class="navClose" id="navClose">
+					<IconX />
 				</button>
 			</div>
-		</div>
-	</nav>
-</header>
+
+			<div class="navBtns">
+				<ButtonDarkTheme client:only="react" />
+				<div class="navToggle">
+					<button class="button" id="buttonMenu">
+						<IconCategory />
+					</button>
+				</div>
+			</div>
+		</nav>
+	</header>
+</div>
+
+<div id="blurOverlay" class="blur-overlay"></div>
 
 <script lang="ts">
 	document.addEventListener("DOMContentLoaded", () => {
@@ -47,27 +51,32 @@ import { MENU } from "@/data/menu"
 		const menuLinks = menuRoot.querySelectorAll("a")
 		const blurOverlay = document.getElementById("blurOverlay")
 		const contentWrapper = document.querySelector(".content-wrapper")
+		const header = document.querySelector("header")
+		const sections = document.querySelectorAll("section[id]")
 
 		const handleIntersection = (entries) => {
-			entries.forEach((entry) => {
-				const id = entry.target.id
+			const visibleSections = entries
+				.filter((entry) => entry.isIntersecting)
+				.sort((a, b) => b.intersectionRatio - a.intersectionRatio)
+
+			if (visibleSections.length > 0) {
+				const mostVisible = visibleSections[0]
+				const id = mostVisible.target.id
 				const menuLink = document.querySelector(`#topNav a[data-id="#${id}"]`)
 
-				if (entry.isIntersecting) {
+				if (menuLink) {
 					menuLinks.forEach((link) => link.classList.remove("active"))
-					menuLink?.classList.add("active")
+					menuLink.classList.add("active")
 				}
-			})
+			}
 		}
 
 		const observer = new IntersectionObserver(handleIntersection, {
-			threshold: 0.6,
+			rootMargin: "-20% 0px -20% 0px",
+			threshold: [0, 0.25, 0.5, 0.75, 1],
 		})
 
-		const sections = document.querySelectorAll("section")
 		sections.forEach((section) => observer.observe(section))
-
-		const header = document.querySelector("header")
 
 		const handleScroll = () => {
 			if (!header) return
@@ -80,71 +89,116 @@ import { MENU } from "@/data/menu"
 			header.classList.remove("scrollShadow")
 		}
 
+		const openMenu = () => {
+			menuRoot.classList.add("showMenu")
+			blurOverlay.classList.add("active")
+			contentWrapper.classList.add("blur-content")
+			document.body.style.overflow = "hidden"
+			buttonMenu.style.opacity = "0"
+		}
+
+		const closeMenu = () => {
+			menuRoot.classList.remove("showMenu")
+			menuRoot.classList.add("transition-exit")
+			blurOverlay.classList.remove("active")
+			contentWrapper.classList.remove("blur-content")
+			document.body.style.overflow = ""
+			buttonMenu.style.opacity = "1"
+
+			menuRoot.addEventListener(
+				"transitionend",
+				() => {
+					menuRoot.classList.remove("transition-exit")
+				},
+				{ once: true },
+			)
+		}
+
 		const handleMenu = () => {
 			const isMobile = window.matchMedia("(max-width: 998px)").matches
 			if (!isMobile) return
 
-			if (menuRoot.classList.contains("showMenu")) {
-				menuRoot.classList.remove("showMenu")
-				menuRoot.classList.add("transition-exit")
-				blurOverlay.classList.remove("active")
-				contentWrapper.classList.remove("blur-content")
-
-				menuRoot.addEventListener(
-					"transitionend",
-					() => {
-						menuRoot.classList.remove("transition-exit")
-					},
-					{ once: true },
-				)
-			} else {
-				menuRoot.classList.add("showMenu")
-				blurOverlay.classList.add("active")
-				contentWrapper.classList.add("blur-content")
-			}
-
-			document.body.style.overflow = menuRoot.classList.contains("showMenu")
-				? "hidden"
-				: ""
-			buttonMenu.style.opacity = menuRoot.classList.contains("showMenu")
-				? "0"
-				: "1"
+			menuRoot.classList.contains("showMenu") ? closeMenu() : openMenu()
 		}
 
 		const handleClickOutside = (event) => {
+			const target = event.target
 			if (
-				!menuRoot.contains(event.target) &&
-				!buttonMenu.contains(event.target)
+				!menuRoot.contains(target) &&
+				!buttonMenu.contains(target) &&
+				menuRoot.classList.contains("showMenu")
 			) {
-				if (menuRoot.classList.contains("showMenu")) {
-					menuRoot.classList.remove("showMenu")
-					menuRoot.classList.add("transition-exit")
-					blurOverlay.classList.remove("active")
-					contentWrapper.classList.remove("blur-content")
+				closeMenu()
+			}
+		}
 
-					menuRoot.addEventListener(
-						"transitionend",
-						() => {
-							menuRoot.classList.remove("transition-exit")
-						},
-						{ once: true },
-					)
+		// Activar sección inicial
+		const activateInitialSection = () => {
+			const visibleSection = Array.from(sections).find((section) => {
+				const rect = section.getBoundingClientRect()
+				return (
+					rect.top <= window.innerHeight / 2 &&
+					rect.bottom >= window.innerHeight / 2
+				)
+			})
 
-					document.body.style.overflow = ""
-					buttonMenu.style.opacity = "1"
+			if (visibleSection) {
+				const menuLink = document.querySelector(
+					`#topNav a[data-id="#${visibleSection.id}"]`,
+				)
+				if (menuLink) {
+					menuLinks.forEach((link) => link.classList.remove("active"))
+					menuLink.classList.add("active")
 				}
 			}
 		}
 
+		// Event Listeners
 		buttonMenu.addEventListener("click", handleMenu)
-		window.addEventListener("scroll", handleScroll)
 		navClose.addEventListener("click", handleMenu)
-		menuLinks.forEach((link) => link.addEventListener("click", handleMenu))
+		window.addEventListener("scroll", handleScroll)
+		window.addEventListener("orientationchange", () => {
+			setTimeout(activateInitialSection, 100)
+		})
 		document.addEventListener("click", handleClickOutside)
+		menuLinks.forEach((link) => link.addEventListener("click", handleMenu))
+
+		// Activación inicial
+		activateInitialSection()
+
+		// Cleanup
+		document.addEventListener("astro:before-swap", () => {
+			sections.forEach((section) => observer.unobserve(section))
+			observer.disconnect()
+		})
 	})
 </script>
 
 <style>
+	.header-wrapper {
+		position: relative;
+		z-index: 100;
+	}
+
+	.blur-overlay {
+		display: none;
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: rgba(0, 0, 0, 0.5);
+		backdrop-filter: blur(4px);
+		z-index: 98;
+		opacity: 0;
+		transition: opacity 0.3s ease;
+	}
+
+	.blur-overlay.active {
+		display: block;
+		opacity: 1;
+	}
+
 	button {
 		background-color: transparent;
 		border: none;
@@ -160,9 +214,10 @@ import { MENU } from "@/data/menu"
 	}
 
 	header {
-		position: sticky;
+		position: fixed;
 		top: 0;
 		background-color: var(--body-color);
+		width: 100%;
 		z-index: 100;
 	}
 
