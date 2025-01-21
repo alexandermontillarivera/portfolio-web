@@ -132,7 +132,6 @@ import { MENU } from "@/data/menu"
 			}
 		}
 
-		// Activar sección inicial
 		const activateInitialSection = () => {
 			const visibleSection = Array.from(sections).find((section) => {
 				const rect = section.getBoundingClientRect()
@@ -153,7 +152,6 @@ import { MENU } from "@/data/menu"
 			}
 		}
 
-		// Event Listeners
 		buttonMenu.addEventListener("click", handleMenu)
 		navClose.addEventListener("click", handleMenu)
 		window.addEventListener("scroll", handleScroll)
@@ -163,10 +161,8 @@ import { MENU } from "@/data/menu"
 		document.addEventListener("click", handleClickOutside)
 		menuLinks.forEach((link) => link.addEventListener("click", handleMenu))
 
-		// Activación inicial
 		activateInitialSection()
 
-		// Cleanup
 		document.addEventListener("astro:before-swap", () => {
 			sections.forEach((section) => observer.unobserve(section))
 			observer.disconnect()
