@@ -1,17 +1,34 @@
 ---
 import "@fontsource/poppins"
 import Menu from "@/components/nav/Menu.astro"
+import Footer from "@/components/footer/Footer.astro"
 import { THEME_STORAGE_NAME, THEME, DARK_THEME_CLASS_NAME } from "@/constants"
 ---
 
 <!doctype html>
 <html lang="es">
 	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/png" href="/favicon.png" />
-		<meta name="generator" content={Astro.generator} />
 		<title>Alexander Montilla Rivera</title>
+		<meta charset="UTF-8" />
+		<link rel="icon" type="image/png" href="/favicon.png" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<meta name="title" content="Alexander Montilla Rivera 👨‍💻" />
+		<meta
+			name="description"
+			content="Alexander Montilla River es un desarrollador Full Stack con sólida experiencia en el desarrollo de aplicaciones web. ¿Quieres saber más sobre él? Visita su portafolio. ✅"
+		/>
+		<meta
+			name="keywords"
+			content="¿Quien es Alexander Montilla Rivera?, Alexander Montilla Rivera, Alexander Montilla"
+		/>
+		<meta property="og:type" content="Website" />
+		<meta property="og:url" content="https://alexandermontillarivera.com" />
+		<meta property="og:title" content="Alexander Montilla Rivera 👨‍💻" />
+		<meta
+			property="og:description"
+			content="Alexander Montilla River es un desarrollador Full Stack con sólida experiencia en el desarrollo de aplicaciones web. ¿Quieres saber más sobre él? Visita su portafolio. ✅"
+		/>
 	</head>
 	<body>
 		<script define:vars={{ THEME_STORAGE_NAME, THEME, DARK_THEME_CLASS_NAME }}>
@@ -41,6 +58,7 @@ import { THEME_STORAGE_NAME, THEME, DARK_THEME_CLASS_NAME } from "@/constants"
 		</div>
 
 		<div class="blur-overlay" id="blurOverlay"></div>
+		<Footer server:defer />
 	</body>
 </html>
 
@@ -87,7 +105,7 @@ import { THEME_STORAGE_NAME, THEME, DARK_THEME_CLASS_NAME } from "@/constants"
 		--z-fixed: 100;
 		--z-modal: 1000;
 		--constras-color: hsl(28deg 100% 93.14% / 41%);
-		--box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+		--box-shadow: 0 0px 4px rgba(0, 0, 0, 0.15);
 		--box-shadow-hover: 0 0 10px rgba(0, 0, 0, 0.1);
 	}
 
@@ -196,6 +214,10 @@ import { THEME_STORAGE_NAME, THEME, DARK_THEME_CLASS_NAME } from "@/constants"
 
 	section:first-child {
 		padding-top: 0px;
+	}
+
+	section:last-child {
+		min-height: fit-content;
 	}
 
 	@media screen and (max-width: 1248px) {

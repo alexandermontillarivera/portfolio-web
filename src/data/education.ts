@@ -18,6 +18,7 @@ export const EDUCATION: IEducation[] = [
 			"Estructurar base de datos SQL",
 			"Introducción a redes y comunicaciones",
 			"Manejo básico de Adobe Photoshop y Adobe Illustrator",
+			"Introducción a la programación móvil con Dart y Flutter",
 		],
 		year: 2022,
 	},

@@ -1,0 +1,85 @@
+---
+import Titles from "@/components/text/Titles.astro"
+import { Slider } from "@/components/elements/Slider"
+import { PEOPLE } from "@/data/inspiration"
+import { SECTIONS } from "@/constants"
+---
+
+<section id={SECTIONS.INSPIRATION}>
+	<Titles title="Inspiración" subtitle="Mis fuentes de inspiración" />
+	<div class="container">
+		<div class="texts-container">
+			<p>
+				Mi pasión por la programación <strong>comenzó a los 13 años</strong>,
+				inspirado por un familiar que programaba. Desde entonces, no he dejado
+				de aprender, motivado por un amor a primera vista por la tecnología.
+			</p>
+			<p>
+				Recibí apoyo y asistí a un politécnico para adentrarme en el mundo de la
+				informática, donde aprendí las bases del desarrollo web y la creación de
+				sitios desde cero. Mis primeros pasos fueron con <strong>HTML</strong>,
+				<strong>CSS</strong> y bases de datos como <strong>SQL</strong> y <strong
+					>SQL Server</strong
+				>. Luego, aprendí <strong>PHP</strong> y desarrollé pequeños scripts para
+				manejar formularios y mostrar datos en páginas web.
+			</p>
+			<p>
+				Disfrutaba de la sana competencia con mis compañeros y formé vínculos
+				con personas afines, compartiendo conocimientos y aprendiendo juntos.
+				Sin embargo, el politécnico no satisfacía mi sed de conocimiento.
+				<strong>Durante la pandemia de 2020</strong>, aproveché la oportunidad
+				de aprender de forma <strong>autodidacta</strong>, explorando múltiples
+				tecnologías para mejorar como desarrollador.
+			</p>
+			<p>
+				No todo fue fácil; enfrenté frustraciones y ansiedades al no entender
+				ciertos conceptos y <strong
+					>lidiar con un mercado laboral desafiante</strong
+				>. A pesar de las dificultades, seguí adelante con el apoyo de personas
+				que me alentaron a no rendirme.
+			</p>
+			<p>
+				A día de hoy, sigo aprendiendo y mejorando mis habilidades, inspirado
+				por personas que admiro y que han logrado grandes cosas en el mundo de
+				la programación y TI. Mi objetivo es seguir creciendo y convertirme en
+				un desarrollador de software de renombre que
+				<strong> marque la diferencia</strong>.
+			</p>
+		</div>
+
+		<Slider data={PEOPLE} client:visible />
+	</div>
+</section>
+
+<style>
+	p {
+		text-wrap: pretty;
+	}
+
+	.container {
+		display: flex;
+		gap: var(--gap-2);
+		justify-content: space-between;
+	}
+
+	.texts-container {
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+
+	@media (max-width: 1200px) {
+		.container {
+			flex-direction: column;
+		}
+
+		.texts-container {
+			align-items: center;
+		}
+
+		p {
+			max-width: 998px;
+		}
+	}
+</style>

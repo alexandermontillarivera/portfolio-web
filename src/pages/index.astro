@@ -1,7 +1,9 @@
 ---
 import "dayjs/locale/es"
+import Inspiration from "@/sections/Inspiration.astro"
 import Experience from "@/sections/Experience.astro"
 import Education from "@/sections/Education.astro"
+import Resources from "@/sections/Resources.astro"
 import Projects from "@/sections/Projects.astro"
 import Skills from "@/sections/Skills.astro"
 import Layout from "@/layouts/Layout.astro"
@@ -17,4 +19,6 @@ dayjs.locale("es")
 	<Projects />
 	<Education />
 	<Skills server:defer />
+	<Inspiration />
+	<Resources />
 </Layout>

@@ -3,6 +3,7 @@ interface Props {
 	text: string
 	position?: "top" | "right" | "bottom" | "left"
 	backgroundColor?: string
+	align?: "left" | "center" | "right"
 	color?: string
 }
 
@@ -11,12 +12,13 @@ const {
 	position = "top",
 	backgroundColor = "#333",
 	color = "#FFF",
+	align = "left",
 } = Astro.props
 ---
 
 <div class="tooltip-wrapper">
 	<div
-		class={`tooltip tooltip-${position}`}
+		class={`tooltip tooltip-${position} text-align-${align}`}
 		style={`--tooltip-bg: ${backgroundColor}; --tooltip-color: ${color}`}
 		data-tooltip={text}
 	>
@@ -121,6 +123,18 @@ const {
 	.tooltip:hover::after {
 		visibility: visible;
 		opacity: 1;
+	}
+
+	.text-align-center {
+		text-align: center;
+	}
+
+	.text-align-right {
+		text-align: right;
+	}
+
+	.text-align-left {
+		text-align: left;
 	}
 
 	@media (max-width: 768px) {

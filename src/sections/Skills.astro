@@ -3,7 +3,7 @@ import Titles from "@/components/text/Titles.astro"
 import Tooltip from "@/components/elements/Tooltip.astro"
 import TechSkillCard from "@/components/cards/TechSkillCard.astro"
 import { TECH_SKILL_TYPE } from "@/interfaces/TechSkill"
-import { TECH_SKILLS } from "@/data/skills"
+import { TECH_SKILLS, TITLES_SKILL } from "@/data/skills"
 import { SECTIONS } from "@/constants"
 
 const list = Object.values(TECH_SKILL_TYPE)
@@ -11,12 +11,12 @@ const sortedItemsRandomly = TECH_SKILLS.sort(() => Math.random() - 0.5)
 ---
 
 <section id={SECTIONS.SKILLS}>
-	<Titles title="Habilidades" subtitle="Mis habilidades técnicas y blandas" />
+	<Titles title="Habilidades" subtitle="Mis habilidades" />
 
 	<menu>
 		{
 			list.map((item) => (
-				<Tooltip text="Filtrar por habilidad">
+				<Tooltip text={TITLES_SKILL[item]} align="center">
 					<button
 						data-filter={item}
 						class:list={[{ active: item === TECH_SKILL_TYPE.ALL }]}

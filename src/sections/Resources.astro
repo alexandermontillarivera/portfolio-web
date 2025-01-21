@@ -1,0 +1,57 @@
+---
+import Titles from "@/components/text/Titles.astro"
+import { Directory } from "@/components/elements/Directory"
+import { RESOURCES } from "@/data/resources"
+import { SECTIONS } from "@/constants"
+---
+
+<section id={SECTIONS.RESOURCES}>
+	<Titles title="Recursos" subtitle="Mis recursos favoritos" />
+
+	<div class="container">
+		<div class="box directory-container">
+			<h3>Directorio de recursos</h3>
+			<div class="content-container">
+				{
+					RESOURCES.map((item, index) => {
+						return (
+							<>
+								<Directory directory={item} client:visible />
+								{index !== RESOURCES.length - 1 && <hr />}
+							</>
+						)
+					})
+				}
+			</div>
+		</div>
+	</div>
+</section>
+
+<style>
+	h3 {
+		margin-bottom: 16px;
+	}
+
+	hr {
+		margin: 0;
+		height: 1px;
+		border: 1px solid var(--border-color);
+	}
+
+	.container {
+		display: flex;
+	}
+
+	.box {
+		background: var(--container-color);
+		box-shadow: var(--box-shadow);
+		border-radius: 12px;
+		padding: 24px;
+		width: 100%;
+	}
+
+	.content-container {
+		border-radius: 12px;
+		background-color: var(--constras-color);
+	}
+</style>

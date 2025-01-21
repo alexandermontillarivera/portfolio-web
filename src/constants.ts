@@ -20,3 +20,6 @@ export const THEME = {
 export const SPOTIFY_API_URL = "https://api.spotify.com/v1"
 export const SPOTIFY_ACCOUNT_API_URL = "https://accounts.spotify.com/api"
 export const FORMAT_DATE_EXPERIENCE = "MMMM YYYY"
+
+export const SLIDE_TIMEOUT = 10000
+export const SLIDE_TRANSITION_DURATION = 500

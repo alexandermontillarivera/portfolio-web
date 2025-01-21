@@ -3,6 +3,7 @@ import { SECTIONS } from "@/constants"
 import {
 	IconLayoutBottombarCollapse,
 	IconLayoutCollage,
+	IconCategoryMinus,
 	IconBriefcase,
 	IconFileText,
 	IconSchool,
@@ -40,5 +41,10 @@ export const MENU: IMenuItem[] = [
 		href: `#${SECTIONS.INSPIRATION}`,
 		text: "Inspiración",
 		icon: IconLayoutBottombarCollapse,
+	},
+	{
+		href: `#${SECTIONS.RESOURCES}`,
+		icon: IconCategoryMinus,
+		text: "Recursos",
 	},
 ]

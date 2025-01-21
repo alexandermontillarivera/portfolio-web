@@ -179,3 +179,16 @@ export const TECH_SKILLS: ITechSkill[] = [
 		web: "https://tailwindcss.com/",
 	},
 ]
+
+export const TITLES_SKILL: Record<TECH_SKILL_TYPE, string> = {
+	[TECH_SKILL_TYPE.FRONTEND]: "Creación de interfaces de usuario",
+	[TECH_SKILL_TYPE.BACKEND]: "Desarrollo de servidores y APIs",
+	[TECH_SKILL_TYPE.DATABASE]: "Gestión de bases de datos",
+	[TECH_SKILL_TYPE.CLOUD]: "Despliegue en la nube",
+	[TECH_SKILL_TYPE.TOOL]: "Herramientas de desarrollo y CMS",
+	[TECH_SKILL_TYPE.FULL_STACK]:
+		"Desarrollo full-stack con habilidades de frontend y backend",
+	[TECH_SKILL_TYPE.AI]: "Inteligencia artificial y machine learning",
+	[TECH_SKILL_TYPE.TESTING]: "Pruebas de software y automatización",
+	[TECH_SKILL_TYPE.ALL]: "Quitar filtros",
+}
