@@ -3,6 +3,12 @@ import "@fontsource/poppins"
 import Menu from "@/components/nav/Menu.astro"
 import Footer from "@/components/footer/Footer.astro"
 import { THEME_STORAGE_NAME, THEME, DARK_THEME_CLASS_NAME } from "@/constants"
+
+interface Props {
+	content?: boolean
+}
+
+const { content = true } = Astro.props
 ---
 
 <!doctype html>
@@ -49,16 +55,23 @@ import { THEME_STORAGE_NAME, THEME, DARK_THEME_CLASS_NAME } from "@/constants"
 			}
 		</script>
 
-		<Menu />
+		{
+			content ? (
+				<>
+					<Menu />
+					<div class="content-wrapper">
+						<main>
+							<slot />
+						</main>
+					</div>
 
-		<div class="content-wrapper">
-			<main>
+					<div class="blur-overlay" id="blurOverlay" />
+					<Footer server:defer />
+				</>
+			) : (
 				<slot />
-			</main>
-		</div>
-
-		<div class="blur-overlay" id="blurOverlay"></div>
-		<Footer server:defer />
+			)
+		}
 	</body>
 </html>
 

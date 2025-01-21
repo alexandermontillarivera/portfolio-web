@@ -1,0 +1,233 @@
+---
+import Layout from "@/layouts/Layout.astro"
+---
+
+<Layout content={false}>
+	<section>
+		<div class="error">
+			<span class="number">4</span>
+			<div class="illustration">
+				<div class="circle"></div>
+				<div class="clip">
+					<div class="paper">
+						<div class="face">
+							<div class="eyes">
+								<div class="eye eye-left"></div>
+								<div class="eye eye-right"></div>
+							</div>
+							<div class="rosyCheeks rosyCheeks-left"></div>
+							<div class="rosyCheeks rosyCheeks-right"></div>
+							<div class="mouth"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<span class="number">4</span>
+		</div>
+
+		<p>Ups... La página que buscas no existe.</p>
+		<a href="/"> Volver al inicio </a>
+	</section>
+</Layout>
+
+<style>
+	body {
+		overflow: hidden;
+	}
+
+	section {
+		min-height: 100vh;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-direction: column;
+		width: 100%;
+		padding: 1rem;
+	}
+
+	a {
+		background-color: var(--first-color);
+		color: #fff;
+		padding: 1rem 2rem;
+		border-radius: 0.5rem;
+		font-weight: 600;
+		transition:
+			opacity 0.3s ease,
+			transform 0.3s ease;
+	}
+
+	a:hover {
+		opacity: 0.9;
+		transform: translateY(-0.2rem);
+	}
+
+	p {
+		margin: 2rem 0;
+		font-weight: 500;
+		font-size: clamp(1rem, 4vw, 1.25rem);
+		text-align: center;
+	}
+
+	.error {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+		gap: 1rem;
+	}
+
+	.number {
+		font-weight: 900;
+		font-size: clamp(4rem, 12vw, 15rem);
+		line-height: 1;
+		color: var(--first-color);
+	}
+
+	.illustration {
+		position: relative;
+		width: clamp(80px, 20vw, 195px);
+		height: clamp(80px, 20vw, 195px);
+	}
+
+	.circle {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		border-radius: 50%;
+		background-color: var(--first-color);
+	}
+
+	.clip {
+		position: absolute;
+		bottom: 5%;
+		left: 50%;
+		transform: translateX(-50%);
+		overflow: hidden;
+		width: 100%;
+		height: 100%;
+		border-radius: 0 0 50% 50%;
+	}
+
+	.paper {
+		position: absolute;
+		bottom: -3%;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 75%;
+		height: 100%;
+		border: 0.3rem solid var(--first-color);
+		background-color: #fff;
+		border-radius: 0.8rem;
+	}
+
+	.face {
+		position: relative;
+		margin-top: 25%;
+	}
+
+	.eyes {
+		position: absolute;
+		top: 0;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 50%;
+		height: 0.8rem;
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.eye {
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		background-color: var(--first-color);
+		animation-name: eye;
+		animation-duration: 4s;
+		animation-iteration-count: infinite;
+		animation-timing-function: ease-in-out;
+	}
+
+	@keyframes eye {
+		0% {
+			height: 8px;
+		}
+		50% {
+			height: 8px;
+		}
+		52% {
+			height: 1px;
+		}
+		54% {
+			height: 8px;
+		}
+		100% {
+			height: 8px;
+		}
+	}
+
+	.rosyCheeks {
+		position: absolute;
+		top: 16px;
+		width: 10px;
+		height: 2px;
+		border-radius: 50%;
+		background-color: pink;
+	}
+
+	.rosyCheeks-left {
+		left: 15%;
+	}
+
+	.rosyCheeks-right {
+		right: 15%;
+	}
+
+	.mouth {
+		position: absolute;
+		top: 31px;
+		left: 50%;
+		width: 16px;
+		height: 2px;
+		border-radius: 1px;
+		transform: translateX(-50%);
+		background-color: var(--first-color);
+	}
+
+	@media (max-width: 480px) {
+		.error {
+			gap: 0.5rem;
+		}
+
+		.illustration {
+			min-width: 80px;
+			min-height: 80px;
+		}
+
+		.eye {
+			width: 6px;
+			height: 6px;
+		}
+
+		.rosyCheeks {
+			width: 8px;
+			height: 1.5px;
+		}
+
+		.mouth {
+			width: 12px;
+			height: 1.5px;
+		}
+
+		.paper {
+			border-width: 2px;
+		}
+
+		.paper::before {
+			width: 10px;
+			height: 8px;
+			border-bottom-width: 2px;
+		}
+	}
+</style>
