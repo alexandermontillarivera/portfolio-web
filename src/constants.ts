@@ -4,7 +4,7 @@ export const enum SECTIONS {
 	RESOURCES = "resources",
 	PROJECTS = "projects",
 	INSPIRATION = "inspiration",
-	SKILLS = "skills",
+	SKILLS = "my-slills",
 	ABOUT = "about",
 	HERO = "hero",
 }
