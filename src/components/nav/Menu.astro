@@ -56,8 +56,30 @@ import { MENU } from "@/data/menu"
 
 		const handleIntersection = (entries) => {
 			const visibleSections = entries
-				.filter((entry) => entry.isIntersecting)
-				.sort((a, b) => b.intersectionRatio - a.intersectionRatio)
+				.filter((entry) => {
+					const rect = entry.boundingClientRect
+					const windowHeight = window.innerHeight
+
+					const visibleHeight =
+						Math.min(rect.bottom, windowHeight) - Math.max(rect.top, 0)
+					const visiblePercentage = visibleHeight / rect.height
+
+					return visiblePercentage > 0.3
+				})
+				.sort((a, b) => {
+					const aRect = a.boundingClientRect
+					const bRect = b.boundingClientRect
+
+					const viewportCenter = window.innerHeight / 2
+					const aDistance = Math.abs(
+						(aRect.top + aRect.bottom) / 2 - viewportCenter,
+					)
+					const bDistance = Math.abs(
+						(bRect.top + bRect.bottom) / 2 - viewportCenter,
+					)
+
+					return aDistance - bDistance
+				})
 
 			if (visibleSections.length > 0) {
 				const mostVisible = visibleSections[0]
@@ -70,10 +92,9 @@ import { MENU } from "@/data/menu"
 				}
 			}
 		}
-
 		const observer = new IntersectionObserver(handleIntersection, {
-			rootMargin: "-20% 0px -20% 0px",
-			threshold: [0, 0.25, 0.5, 0.75, 1],
+			rootMargin: "-10% 0px -10% 0px",
+			threshold: Array.from({ length: 11 }, (_, i) => i / 10),
 		})
 
 		sections.forEach((section) => observer.observe(section))
