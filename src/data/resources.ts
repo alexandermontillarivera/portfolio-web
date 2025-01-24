@@ -122,4 +122,21 @@ export const RESOURCES: IDirectory[] = [
 			},
 		],
 	},
+	{
+		title: "Ilustraciones",
+		items: [
+			{
+				image: "/images/resources/illustrationkit.png",
+				title: "Illustration kit",
+				type: TYPE_CONTENT.ANCHOR,
+				url: "https://illustrationkit.com/",
+			},
+			{
+				image: "/images/resources/undraw.png",
+				title: "Undraw",
+				type: TYPE_CONTENT.ANCHOR,
+				url: "https://undraw.co/",
+			},
+		],
+	},
 ]
