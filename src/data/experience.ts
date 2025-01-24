@@ -2,7 +2,7 @@ import type { IExperience } from "@/interfaces/Experience"
 
 export const EXPERIENCE: IExperience[] = [
 	{
-		startDate: new Date("2022-02-01"),
+		startDate: new Date("2023-02-01"),
 		title: "Líder de proyectos",
 		company: "Codika SRL",
 		technologies: [
