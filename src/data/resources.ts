@@ -74,6 +74,12 @@ export const RESOURCES: IDirectory[] = [
 				type: TYPE_CONTENT.ANCHOR,
 				url: "https://claude.ai/",
 			},
+			{
+				title: "Deepseek - Chat y modelo de AI abierto",
+				image: "/images/resources/deepseek.ico",
+				type: TYPE_CONTENT.ANCHOR,
+				url: "https://www.deepseek.com/",
+			},
 		],
 	},
 	{
