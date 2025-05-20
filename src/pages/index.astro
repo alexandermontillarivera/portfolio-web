@@ -5,6 +5,7 @@ import Experience from "@/sections/Experience.astro"
 import Education from "@/sections/Education.astro"
 import Resources from "@/sections/Resources.astro"
 import Projects from "@/sections/Projects.astro"
+import Summary from "@/sections/Summary.astro"
 import Skills from "@/sections/Skills.astro"
 import Layout from "@/layouts/Layout.astro"
 import Hero from "@/sections/Hero.astro"
@@ -14,11 +15,12 @@ dayjs.locale("es")
 ---
 
 <Layout>
-	<Hero />
-	<Experience />
-	<Projects />
-	<Education />
-	<Skills server:defer />
-	<Inspiration />
-	<Resources />
+  <Hero />
+  <Summary />
+  <Experience />
+  <Projects />
+  <Education />
+  <Skills server:defer />
+  <Inspiration />
+  <Resources />
 </Layout>

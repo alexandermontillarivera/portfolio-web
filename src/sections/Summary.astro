@@ -1,0 +1,105 @@
+---
+import BentoGrid from "@/components/box/BentoGrid.astro"
+import BentoItem from "@/components/box/BentoItem.astro"
+import { EXPERIENCE } from "@/data/experience"
+import { TECH_SKILLS } from "@/data/skills"
+import { PROJECTS } from "@/data/project"
+import { IconBriefcase, IconCode, IconTrophy, IconBrandGithub, IconRocket } from "@tabler/icons-react"
+
+const yearsOfExperience = EXPERIENCE.reduce((acc, exp) => {
+  const start = new Date(exp.startDate)
+  const end = exp.endDate ? new Date(exp.endDate) : new Date()
+  return acc + (end.getFullYear() - start.getFullYear())
+}, 0)
+
+const technologies = TECH_SKILLS.length
+const projects = PROJECTS.length
+---
+
+<section class="summary-section">
+  <BentoGrid>
+    <BentoItem
+      title="Experiencia Profesional"
+      subtitle={`${yearsOfExperience}+ años de experiencia`}
+      colSpan={2}
+      class="experience-item"
+    >
+      <div class="icon-container">
+        <IconBriefcase size={40} />
+      </div>
+      <p>Desarrollador Full Stack con experiencia en múltiples proyectos y tecnologías</p>
+    </BentoItem>
+
+    <BentoItem
+      title="Stack Tecnológico"
+      subtitle={`${technologies}+ tecnologías dominadas`}
+      colSpan={2}
+      class="tech-item"
+    >
+      <div class="icon-container">
+        <IconCode size={40} />
+      </div>
+      <p>Especializado en desarrollo web moderno con React, Node.js y tecnologías cloud</p>
+    </BentoItem>
+
+    <BentoItem
+      title="Proyectos Destacados"
+      subtitle={`${projects} proyectos personales`}
+      colSpan={2}
+      class="projects-item"
+    >
+      <div class="icon-container">
+        <IconRocket size={40} />
+      </div>
+      <p>Creador de soluciones innovadoras y aplicaciones web de alto impacto</p>
+    </BentoItem>
+
+    <BentoItem
+      title="Contribuciones Open Source"
+      subtitle="Activo en la comunidad"
+      colSpan={2}
+      class="github-item"
+    >
+      <div class="icon-container">
+        <IconBrandGithub size={40} />
+      </div>
+      <p>Comprometido con el código abierto y el aprendizaje continuo</p>
+    </BentoItem>
+  </BentoGrid>
+</section>
+
+<style>
+  .summary-section {
+    padding: 4rem 0;
+    background: var(--body-color);
+  }
+
+  .icon-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    color: var(--first-color);
+  }
+
+  :global(.experience-item) {
+    background: linear-gradient(45deg, var(--container-color), var(--constras-color));
+  }
+
+  :global(.tech-item) {
+    background: linear-gradient(-45deg, var(--container-color), var(--constras-color));
+  }
+
+  :global(.projects-item) {
+    background: linear-gradient(45deg, var(--container-color), var(--constras-color));
+  }
+
+  :global(.github-item) {
+    background: linear-gradient(-45deg, var(--container-color), var(--constras-color));
+  }
+
+  @media (max-width: 1248px) {
+    .summary-section {
+      padding: 4rem 2rem;
+    }
+  }
+</style>
