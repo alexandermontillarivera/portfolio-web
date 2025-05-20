@@ -4,12 +4,22 @@ import BentoItem from "@/components/box/BentoItem.astro"
 import { EXPERIENCE } from "@/data/experience"
 import { TECH_SKILLS } from "@/data/skills"
 import { PROJECTS } from "@/data/project"
-import { IconBriefcase, IconCode, IconTrophy, IconBrandGithub, IconRocket, IconBrain, IconHeart, IconStar } from "@tabler/icons-react"
+import {
+	IconBriefcase,
+	IconCode,
+	IconTrophy,
+	IconBrandGithub,
+	IconRocket,
+	IconBrain,
+	IconHeart,
+	IconStar,
+	IconCategoryMinus,
+} from "@tabler/icons-react"
 
 const yearsOfExperience = EXPERIENCE.reduce((acc, exp) => {
-  const start = new Date(exp.startDate)
-  const end = exp.endDate ? new Date(exp.endDate) : new Date()
-  return acc + (end.getFullYear() - start.getFullYear())
+	const start = new Date(exp.startDate)
+	const end = exp.endDate ? new Date(exp.endDate) : new Date()
+	return acc + (end.getFullYear() - start.getFullYear())
 }, 0)
 
 const technologgies = TECH_SKILLS.length
@@ -17,157 +27,202 @@ const projects = PROJECTS.length
 ---
 
 <section class="summary-section">
-  <BentoGrid>
-    <!-- Primera card grande (izquierda superior) -->
-    <BentoItem
-      title="Experiencia Profesional"
-      subtitle={`${yearsOfExperience}+ años de experiencia`}
-      colSpan={6}
-      rowSpan={3}
-      class="experience-item"
-    >
-      <div class="icon-container">
-        <IconBriefcase size={40} />
-      </div>
-      <p>Desarrollador Full Stack con experiencia en múltiples proyectos y tecnologías, especializado en crear soluciones escalables y mantenibles.</p>
-    </BentoItem>
+	<BentoGrid>
+		<BentoItem
+			title="Experiencia Profesional"
+			subtitle={`${yearsOfExperience}+ años de experiencia`}
+			colSpan={6}
+			rowSpan={3}
+			class="experience-item"
+		>
+			<div class="icon-container">
+				<IconBriefcase size={40} />
+			</div>
+			<p>
+				Desarrollador Full Stack con experiencia en múltiples proyectos y
+				tecnologías, especializado en crear soluciones escalables y mantenibles.
+			</p>
+		</BentoItem>
 
-    <!-- Segunda card grande (izquierda inferior) -->
-    <BentoItem
-      title="Stack Tecnológico"
-      subtitle={`${technologies}+ tecnologías dominadas`}
-      colSpan={6}
-      rowSpan={3}
-      class="tech-item"
-    >
-      <div class="icon-container">
-        <IconCode size={40} />
-      </div>
-      <p>Dominio de tecnologías modernas para el desarrollo web full-stack, incluyendo React, Node.js, y servicios cloud.</p>
-    </BentoItem>
+		<!-- Segunda card grande (izquierda inferior) -->
+		<BentoItem
+			title="Stack Tecnológico"
+			subtitle={`${technologgies}+ tecnologías dominadas`}
+			colSpan={6}
+			rowSpan={3}
+			class="tech-item"
+		>
+			<div class="icon-container">
+				<IconCode size={40} />
+			</div>
+			<p>
+				Dominio de tecnologías modernas para el desarrollo web full-stack,
+				incluyendo React, Node.js, y servicios cloud.
+			</p>
+		</BentoItem>
 
-    <!-- Card delgada superior (centro) -->
-    <BentoItem
-      title="Proyectos Destacados"
-      subtitle={`${projects} proyectos personales`}
-      colSpan={3}
-      class="projects-item"
-    >
-      <div class="icon-container">
-        <IconRocket size={24} />
-      </div>
-    </BentoItem>
+		<!-- Card delgada superior (centro) -->
+		<BentoItem
+			title="Proyectos Destacados"
+			subtitle={`${projects} proyectos personales`}
+			colSpan={3}
+			class="projects-item"
+		>
+			<div class="icon-container">
+				<IconRocket size={24} />
+			</div>
+		</BentoItem>
 
-    <!-- Card central (centro) -->
-    <BentoItem
-      title="Open Source"
-      subtitle="Contribuidor Activo"
-      colSpan={3}
-      rowSpan={4}
-      class="github-item"
-    >
-      <div class="icon-container">
-        <IconBrandGithub size={40} />
-      </div>
-      <p>Comprometido con el código abierto y el desarrollo de la comunidad tecnológica.</p>
-    </BentoItem>
+		<BentoItem
+			title="Open Source"
+			subtitle="Contribuidor Activo"
+			colSpan={3}
+			rowSpan={2}
+			class="github-item"
+		>
+			<div class="icon-container">
+				<IconBrandGithub size={40} />
+			</div>
+			<p>
+				Comprometido con el código abierto y el desarrollo de la comunidad
+				tecnológica.
+			</p>
+		</BentoItem>
 
-    <!-- Card delgada inferior (centro) -->
-    <BentoItem
-      title="Aprendizaje Continuo"
-      subtitle="Siempre actualizado"
-      colSpan={3}
-      class="learning-item"
-    >
-      <div class="icon-container">
-        <IconBrain size={24} />
-      </div>
-    </BentoItem>
+		<!-- Card delgada inferior (centro) -->
+		<BentoItem
+			title="Aprendizaje Continuo"
+			subtitle="Siempre actualizado"
+			colSpan={3}
+			class="learning-item"
+		>
+			<div class="icon-container">
+				<IconBrain size={24} />
+			</div>
+		</BentoItem>
 
-    <!-- Cards pequeñas (derecha) -->
-    <BentoItem
-      title="Soft Skills"
-      subtitle="Liderazgo"
-      colSpan={3}
-      class="soft-skills-item"
-    >
-      <div class="icon-container">
-        <IconHeart size={24} />
-      </div>
-    </BentoItem>
+		<!-- Cards pequeñas (derecha) -->
+		<BentoItem
+			title="Soft Skills"
+			subtitle="Liderazgo"
+			colSpan={3}
+			class="soft-skills-item"
+		>
+			<div class="icon-container">
+				<IconHeart size={24} />
+			</div>
+		</BentoItem>
 
-    <BentoItem
-      title="Logros"
-      subtitle="Reconocimientos"
-      colSpan={3}
-      class="achievements-item"
-    >
-      <div class="icon-container">
-        <IconTrophy size={24} />
-      </div>
-    </BentoItem>
+		<BentoItem
+			title="Logros"
+			subtitle="Reconocimientos"
+			colSpan={3}
+			class="achievements-item"
+		>
+			<div class="icon-container">
+				<IconTrophy size={24} />
+			</div>
+		</BentoItem>
 
-    <BentoItem
-      title="Innovación"
-      subtitle="Creatividad"
-      colSpan={3}
-      class="innovation-item"
-    >
-      <div class="icon-container">
-        <IconStar size={24} />
-      </div>
-    </BentoItem>
-  </BentoGrid>
+		<BentoItem
+			title="Innovación"
+			subtitle="Creatividad"
+			colSpan={3}
+			class="innovation-item"
+		>
+			<div class="icon-container">
+				<IconStar size={24} />
+			</div>
+		</BentoItem>
+
+		<BentoItem title="Recursos" subtitle="Herramientas favoritas" colSpan={3}>
+			<div class="icon-container">
+				<IconCategoryMinus />
+			</div>
+		</BentoItem>
+	</BentoGrid>
 </section>
 
 <style>
-  .summary-section {
-    padding: 4rem 0;
-    background: var(--body-color);
-  }
+	.summary-section {
+		padding: 4rem 0;
+		background: var(--body-color);
+	}
 
-  .icon-container {
-    display: flex;
-    align-items: center;
-    margin-bottom: 1rem;
-    color: var(--first-color);
-  }
+	.icon-container {
+		display: flex;
+		align-items: center;
+		margin-bottom: 1rem;
+		color: var(--first-color);
+	}
 
-  :global(.experience-item) {
-    background: linear-gradient(135deg, var(--container-color), var(--constras-color));
-  }
+	:global(.experience-item) {
+		background: linear-gradient(
+			135deg,
+			var(--container-color),
+			var(--constras-color)
+		);
+	}
 
-  :global(.tech-item) {
-    background: linear-gradient(225deg, var(--container-color), var(--constras-color));
-  }
+	:global(.tech-item) {
+		background: linear-gradient(
+			225deg,
+			var(--container-color),
+			var(--constras-color)
+		);
+	}
 
-  :global(.projects-item) {
-    background: linear-gradient(45deg, var(--container-color), var(--constras-color));
-  }
+	:global(.projects-item) {
+		background: linear-gradient(
+			45deg,
+			var(--container-color),
+			var(--constras-color)
+		);
+	}
 
-  :global(.github-item) {
-    background: linear-gradient(315deg, var(--container-color), var(--constras-color));
-  }
+	:global(.github-item) {
+		background: linear-gradient(
+			315deg,
+			var(--container-color),
+			var(--constras-color)
+		);
+	}
 
-  :global(.learning-item) {
-    background: linear-gradient(180deg, var(--container-color), var(--constras-color));
-  }
+	:global(.learning-item) {
+		background: linear-gradient(
+			180deg,
+			var(--container-color),
+			var(--constras-color)
+		);
+	}
 
-  :global(.soft-skills-item) {
-    background: linear-gradient(90deg, var(--container-color), var(--constras-color));
-  }
+	:global(.soft-skills-item) {
+		background: linear-gradient(
+			90deg,
+			var(--container-color),
+			var(--constras-color)
+		);
+	}
 
-  :global(.achievements-item) {
-    background: linear-gradient(270deg, var(--container-color), var(--constras-color));
-  }
+	:global(.achievements-item) {
+		background: linear-gradient(
+			270deg,
+			var(--container-color),
+			var(--constras-color)
+		);
+	}
 
-  :global(.innovation-item) {
-    background: linear-gradient(0deg, var(--container-color), var(--constras-color));
-  }
+	:global(.innovation-item) {
+		background: linear-gradient(
+			0deg,
+			var(--container-color),
+			var(--constras-color)
+		);
+	}
 
-  @media (max-width: 1248px) {
-    .summary-section {
-      padding: 4rem 2rem;
-    }
-  }
+	@media (max-width: 1248px) {
+		.summary-section {
+			padding: 4rem 2rem;
+		}
+	}
 </style>
