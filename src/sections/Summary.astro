@@ -12,7 +12,7 @@ const yearsOfExperience = EXPERIENCE.reduce((acc, exp) => {
   return acc + (end.getFullYear() - start.getFullYear())
 }, 0)
 
-const technologies = TECH_SKILLS.length
+const technologgies = TECH_SKILLS.length
 const projects = PROJECTS.length
 ---
 
@@ -104,6 +104,17 @@ const projects = PROJECTS.length
     >
       <div class="icon-container">
         <IconTrophy size={24} />
+      </div>
+    </BentoItem>
+
+    <BentoItem
+      title="Innovación"
+      subtitle="Creatividad"
+      colSpan={3}
+      class="innovation-item"
+    >
+      <div class="icon-container">
+        <IconStar size={24} />
       </div>
     </BentoItem>
 
