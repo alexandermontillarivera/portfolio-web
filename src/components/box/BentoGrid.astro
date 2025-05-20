@@ -14,11 +14,10 @@ const { class: className } = Astro.props
   .bento-grid {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
-    gap: 1.5rem;
-    padding: 1.5rem;
+    gap: 1rem;
+    padding: 1rem;
     max-width: 1200px;
     margin: 0 auto;
-    min-height: 600px;
   }
 
   @media (max-width: 1024px) {
@@ -30,8 +29,6 @@ const { class: className } = Astro.props
   @media (max-width: 640px) {
     .bento-grid {
       grid-template-columns: 1fr;
-      gap: 1rem;
-      padding: 1rem;
     }
   }
 </style>

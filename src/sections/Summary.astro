@@ -4,7 +4,7 @@ import BentoItem from "@/components/box/BentoItem.astro"
 import { EXPERIENCE } from "@/data/experience"
 import { TECH_SKILLS } from "@/data/skills"
 import { PROJECTS } from "@/data/project"
-import { IconBriefcase, IconCode, IconTrophy, IconBrandGithub, IconRocket, IconBrain, IconHeart, IconStar, IconTarget } from "@tabler/icons-react"
+import { IconBriefcase, IconCode, IconTrophy, IconBrandGithub, IconRocket, IconBrain, IconHeart, IconStar } from "@tabler/icons-react"
 
 const yearsOfExperience = EXPERIENCE.reduce((acc, exp) => {
   const start = new Date(exp.startDate)
@@ -22,7 +22,7 @@ const projects = PROJECTS.length
     <BentoItem
       title="Experiencia Profesional"
       subtitle={`${yearsOfExperience}+ años de experiencia`}
-      colSpan={4}
+      colSpan={6}
       rowSpan={3}
       class="experience-item"
     >
@@ -36,7 +36,7 @@ const projects = PROJECTS.length
     <BentoItem
       title="Stack Tecnológico"
       subtitle={`${technologies}+ tecnologías dominadas`}
-      colSpan={4}
+      colSpan={6}
       rowSpan={3}
       class="tech-item"
     >
@@ -50,7 +50,7 @@ const projects = PROJECTS.length
     <BentoItem
       title="Proyectos Destacados"
       subtitle={`${projects} proyectos personales`}
-      colSpan={4}
+      colSpan={3}
       class="projects-item"
     >
       <div class="icon-container">
@@ -62,7 +62,7 @@ const projects = PROJECTS.length
     <BentoItem
       title="Open Source"
       subtitle="Contribuidor Activo"
-      colSpan={4}
+      colSpan={3}
       rowSpan={4}
       class="github-item"
     >
@@ -76,7 +76,7 @@ const projects = PROJECTS.length
     <BentoItem
       title="Aprendizaje Continuo"
       subtitle="Siempre actualizado"
-      colSpan={4}
+      colSpan={3}
       class="learning-item"
     >
       <div class="icon-container">
@@ -88,8 +88,7 @@ const projects = PROJECTS.length
     <BentoItem
       title="Soft Skills"
       subtitle="Liderazgo"
-      colSpan={4}
-      rowSpan={2}
+      colSpan={3}
       class="soft-skills-item"
     >
       <div class="icon-container">
@@ -100,8 +99,7 @@ const projects = PROJECTS.length
     <BentoItem
       title="Logros"
       subtitle="Reconocimientos"
-      colSpan={4}
-      rowSpan={2}
+      colSpan={3}
       class="achievements-item"
     >
       <div class="icon-container">
@@ -112,25 +110,11 @@ const projects = PROJECTS.length
     <BentoItem
       title="Innovación"
       subtitle="Creatividad"
-      colSpan={4}
-      rowSpan={2}
+      colSpan={3}
       class="innovation-item"
     >
       <div class="icon-container">
         <IconStar size={24} />
-      </div>
-    </BentoItem>
-
-    <!-- Nueva card -->
-    <BentoItem
-      title="Objetivos"
-      subtitle="Metas Claras"
-      colSpan={4}
-      rowSpan={2}
-      class="goals-item"
-    >
-      <div class="icon-container">
-        <IconTarget size={24} />
       </div>
     </BentoItem>
   </BentoGrid>
@@ -179,10 +163,6 @@ const projects = PROJECTS.length
 
   :global(.innovation-item) {
     background: linear-gradient(0deg, var(--container-color), var(--constras-color));
-  }
-
-  :global(.goals-item) {
-    background: linear-gradient(45deg, var(--container-color), var(--constras-color));
   }
 
   @media (max-width: 1248px) {
