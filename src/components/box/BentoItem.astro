@@ -1,0 +1,65 @@
+---
+interface Props {
+  title: string
+  subtitle?: string
+  class?: string
+  colSpan?: number
+  rowSpan?: number
+}
+
+const { title, subtitle, class: className, colSpan = 1, rowSpan = 1 } = Astro.props
+---
+
+<article
+  class:list={["bento-item", className]}
+  style={`grid-column: span ${colSpan}; grid-row: span ${rowSpan};`}
+>
+  <div class="content">
+    <header>
+      <h3>{title}</h3>
+      {subtitle && <p>{subtitle}</p>}
+    </header>
+    <div class="body">
+      <slot />
+    </div>
+  </div>
+</article>
+
+<style>
+  .bento-item {
+    border-radius: 1rem;
+    background: var(--container-color);
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    height: 100%;
+    box-shadow: var(--box-shadow);
+  }
+
+  .bento-item:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--box-shadow-hover);
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 1rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+    color: var(--first-color);
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    color: var(--text-color);
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .body {
+    flex: 1;
+  }
+</style>

@@ -66,7 +66,7 @@ const { hideMenuItems = false } = Astro.props
 		const blurOverlay = document.getElementById("blurOverlay")
 		const contentWrapper = document.querySelector(".content-wrapper")
 		const header = document.querySelector("header")
-		const sections = document.querySelectorAll("section[id]")
+		let sections = document.querySelectorAll("section[id]")
 
 		const handleIntersection = (entries) => {
 			const visibleSections = entries
@@ -196,6 +196,22 @@ const { hideMenuItems = false } = Astro.props
 		})
 		document.addEventListener("click", handleClickOutside)
 		menuLinks.forEach((link) => link.addEventListener("click", handleMenu))
+
+		const reinitializeObserver = () => {
+			sections.forEach((section) => observer.unobserve(section))
+
+			const updatedSections = document.querySelectorAll("section[id]")
+
+			updatedSections.forEach((section) => observer.observe(section))
+
+			sections = updatedSections
+		}
+
+		window.addEventListener("load", () => {
+			setTimeout(reinitializeObserver, 300)
+		})
+
+		setTimeout(reinitializeObserver, 1000)
 
 		activateInitialSection()
 
