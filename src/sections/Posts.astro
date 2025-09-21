@@ -1,0 +1,40 @@
+---
+import PostCard from "@/components/cards/PostCard.astro"
+import AutoGrid from "@/components/box/AutoGrid.astro"
+import Titles from "@/components/text/Titles.astro"
+import { getPosts } from "@/services/wordpress"
+import { Post } from "@/interfaces/PostList"
+import { SECTIONS } from "@/constants"
+
+let posts: Post[] = []
+
+const response = await getPosts()
+
+if (!response.error) {
+	posts = response.data.posts
+}
+---
+
+<section id={SECTIONS.BLOG}>
+	<Titles
+		title="Mi blog personal"
+		subtitle="Mis publicaciones para aprender y compartir conocimientos"
+	/>
+
+	{
+		posts.length > 0 && (
+			<AutoGrid>
+				{posts.map((post) => (
+					<PostCard post={post} />
+				))}
+			</AutoGrid>
+		)
+	}
+</section>
+
+<style>
+	section {
+		min-height: 100vh;
+		margin-bottom: 300px;
+	}
+</style>

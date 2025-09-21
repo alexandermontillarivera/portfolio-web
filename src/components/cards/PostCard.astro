@@ -1,0 +1,102 @@
+---
+import Image from "astro/components/ResponsiveImage.astro"
+import { IconCalendarMonth } from "@tabler/icons-react"
+import { Post } from "@/interfaces/PostList"
+import Tag from "@/components/elements/Tag.astro"
+import dayjs from "dayjs"
+
+export interface Props {
+	post: Post
+}
+
+const { post } = Astro.props
+---
+
+<article>
+	<a href={`/blog/${post.slug}`}>
+		<header>
+			<Image
+				class:list={["image", !post.post_thumbnail?.width ? "error" : ""]}
+				alt={post.title}
+				src={post?.post_thumbnail?.URL ?? "/error-image.jpeg"}
+				width={post?.post_thumbnail?.width ?? 800}
+				height={post?.post_thumbnail?.height ?? 100}
+				inferSize={!post?.post_thumbnail?.width}
+			/>
+			<h3>{post.title}</h3>
+		</header>
+
+		<div set:html={post.excerpt} class="content" />
+		<footer>
+			<div class="tags-container">
+				{Object.keys(post.tags).map((tag) => <Tag>{tag}</Tag>)}
+			</div>
+
+			<div class="date">
+				<IconCalendarMonth />
+				<span>{dayjs(post.date).format("DD/MM/YYYY")}</span>
+			</div>
+		</footer>
+	</a>
+</article>
+
+<style>
+	a {
+		text-decoration: none;
+		color: var(--text-color);
+		height: 100%;
+	}
+
+	article {
+		background: var(--container-color);
+		border-radius: 12px;
+		box-shadow: var(--box-shadow);
+		display: flex;
+		flex-direction: column;
+		height: fit-content;
+		transition:
+			transform 0.3s ease,
+			box-shadow 0.3s ease;
+	}
+
+	article:hover {
+		transform: translateY(-5px);
+	}
+
+	header {
+		padding: 1.5rem;
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+	}
+
+	footer {
+		padding: 24px 24px 32px 24px;
+	}
+
+	.tags-container {
+		gap: 8px;
+		display: flex;
+		flex-wrap: wrap;
+	}
+
+	.date {
+		display: flex;
+		align-items: center;
+		margin-top: 16px;
+		gap: 8px;
+	}
+
+	.content {
+		padding: 0px 24px;
+	}
+
+	.image {
+		border-radius: 8px;
+	}
+
+	.image.error {
+		object-fit: cover;
+		height: 335px;
+	}
+</style>

@@ -8,6 +8,7 @@ import {
 	IconFileText,
 	IconSchool,
 	IconHome,
+	IconArticle,
 } from "@tabler/icons-react"
 
 export const MENU: IMenuItem[] = [
@@ -47,4 +48,9 @@ export const MENU: IMenuItem[] = [
 		icon: IconCategoryMinus,
 		text: "Recursos",
 	},
+	// {
+	// 	href: `#${SECTIONS.BLOG}`,
+	// 	text: "Blog",
+	// 	icon: IconArticle,
+	// },
 ]

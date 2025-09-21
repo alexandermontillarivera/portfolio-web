@@ -1,0 +1,89 @@
+---
+import type { HTMLNode } from "@/utils/htmlParser"
+import CodeBlock from "./CodeBlock.astro"
+
+export interface BlogRenderProps {
+	node: HTMLNode
+}
+
+const { node } = Astro.props
+---
+
+{
+	node.type === "text"
+		? node.content
+		: node.type === "element" &&
+			(() => {
+				const children = node.children.map((child: HTMLNode, index: number) => (
+					<Astro.self node={child} key={index} />
+				))
+
+				if (node.attributes?.class?.includes("-code")) {
+					console.log(node)
+				}
+
+				switch (node.tagName) {
+					case "h1":
+						return <h1 {...node.attributes}>{children}</h1>
+					case "h2":
+						return <h2 {...node.attributes}>{children}</h2>
+					case "h3":
+						return <h3 {...node.attributes}>{children}</h3>
+					case "p":
+						return <p {...node.attributes}>{children}</p>
+					case "a":
+						return <a {...node.attributes}>{children}</a>
+					case "figure":
+						return <figure {...node.attributes}>{children}</figure>
+					case "div":
+						if (
+							node.attributes?.class?.includes(
+								"wp-block-syntaxhighlighter-code",
+							)
+						) {
+							const codeText = node.children[0]?.children[0]?.content
+								.replace(/<code>/g, "")
+								.replace(/<\/code>/g, "")
+								.trim()
+
+							return <CodeBlock code={codeText} />
+						}
+
+						return <div {...node.attributes}>{children}</div>
+					case "span":
+						return <span {...node.attributes}>{children}</span>
+					case "strong":
+						return <strong {...node.attributes}>{children}</strong>
+					case "em":
+						return <em {...node.attributes}>{children}</em>
+					case "ul":
+						return <ul {...node.attributes}>{children}</ul>
+					case "ol":
+						return <ol {...node.attributes}>{children}</ol>
+					case "li":
+						return <li {...node.attributes}>{children}</li>
+					case "pre":
+					case "code":
+						const codeText = node.children[0]?.content
+							.replace(/<code>/g, "")
+							.replace(/<\/code>/g, "")
+							.trim()
+
+						const className = node?.attributes?.class || ""
+
+						if (className.includes("-code")) {
+							return <CodeBlock code={codeText} />
+						}
+
+						return <code {...node.attributes}>{children}</code>
+					default:
+						return <div {...node.attributes}>{children}</div>
+				}
+			})()
+}
+
+<style>
+	p {
+		margin: 1.5rem 0;
+	}
+</style>

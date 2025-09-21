@@ -1,0 +1,66 @@
+---
+import Layout from "@/layouts/Layout.astro"
+import BlogRender from "@/components/blog/BlogRender.astro"
+import Image from "astro/components/ResponsiveImage.astro"
+import { parseHTML, HTMLNode } from "@/utils/htmlParser"
+import { getPostBySlug } from "@/services/wordpress"
+import { APP_HOST } from "@/enviroments"
+
+const { slug } = Astro.params
+
+let content: HTMLNode[] | null = null
+
+const response = await getPostBySlug(slug ?? "")
+
+if (!response.error) {
+	content = parseHTML(response.data.content)
+}
+
+const { data } = response
+---
+
+{
+	content && data && (
+		<Layout hideMenuItems>
+			<header class="not-global">
+				<h1>{data?.title}</h1>
+				<Image
+					alt={data?.title}
+					src={data.featured_image || `${APP_HOST}/error-image.jpeg`}
+					class="post-feature-image"
+					inferSize
+				/>
+			</header>
+			<section>
+				{content.map((node) => (
+					<BlogRender node={node} />
+				))}
+			</section>
+		</Layout>
+	)
+}
+
+<style>
+	header {
+		margin-top: 100px;
+	}
+
+	section {
+		min-height: initial;
+		padding-top: 24px;
+	}
+
+	.post-feature-image {
+		margin-top: 2rem;
+		border-radius: 16px;
+		aspect-ratio: 16 / 9;
+		object-fit: cover;
+		width: 100%;
+	}
+
+	@media (max-width: 998px) {
+		header {
+			margin-top: 50px;
+		}
+	}
+</style>

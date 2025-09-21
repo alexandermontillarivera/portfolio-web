@@ -2,6 +2,22 @@ import type { IEducation } from "@/interfaces/Education"
 
 export const EDUCATION: IEducation[] = [
 	{
+		title: "Software Engineer",
+		description:
+			"Educación universitaria en APEC, con especialización en ingeniería de software.",
+		image: "/images/education/unapec.png",
+		institution: "Universidad APEC",
+		skills: [
+			"Desarrollo de software",
+			"Análisis y diseño de sistemas",
+			"Bases de datos",
+			"Redes y comunicaciones",
+			"Seguridad informática",
+			"Metodologías ágiles",
+			"Gestión de proyectos",
+		],
+	},
+	{
 		title: "Técnico en aplicaciones informáticas",
 		description:
 			"Educación secundaria técnico profesional en el IPPC, con especialización en aplicaciones informáticas.",

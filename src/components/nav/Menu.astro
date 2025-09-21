@@ -2,40 +2,54 @@
 import { ButtonDarkTheme } from "@/components/button/DarkTheme"
 import { IconCategory, IconX } from "@tabler/icons-react"
 import { MENU } from "@/data/menu"
+
+export interface Props {
+	hideMenuItems?: boolean
+}
+
+const { hideMenuItems = false } = Astro.props
 ---
 
 <div class="header-wrapper">
 	<header>
 		<nav class="nav">
-			<a href="#" class="navLogo">Alexander Montilla Rivera</a>
+			<a href="/#" class="navLogo">Alexander Montilla Rivera</a>
 			<div class="navMenu" id="topNav">
-				<ul class="navList">
-					{
-						MENU.map((item) => (
-							<li class="navItem">
-								<a href={item.href} class="navLink" data-id={item.href}>
-									<div class="navIcon">
-										<item.icon />
-									</div>
-									{item.text}
-								</a>
-							</li>
-						))
-					}
-				</ul>
+				{
+					!hideMenuItems && (
+						<>
+							<ul class="navList">
+								{MENU.map((item) => (
+									<li class="navItem">
+										<a href={item.href} class="navLink" data-id={item.href}>
+											<div class="navIcon">
+												<item.icon />
+											</div>
+											{item.text}
+										</a>
+									</li>
+								))}
+							</ul>
 
-				<button class="navClose" id="navClose">
-					<IconX />
-				</button>
+							<button class="navClose" id="navClose">
+								<IconX />
+							</button>
+						</>
+					)
+				}
 			</div>
 
 			<div class="navBtns">
 				<ButtonDarkTheme client:only="react" />
-				<div class="navToggle">
-					<button class="button" id="buttonMenu">
-						<IconCategory />
-					</button>
-				</div>
+				{
+					!hideMenuItems && (
+						<div class="navToggle">
+							<button class="button" id="buttonMenu">
+								<IconCategory />
+							</button>
+						</div>
+					)
+				}
 			</div>
 		</nav>
 	</header>
@@ -103,6 +117,7 @@ import { MENU } from "@/data/menu"
 			if (!header) return
 
 			const scroll = window.scrollY
+
 			if (scroll >= 10) {
 				header.classList.add("scrollShadow")
 				return
@@ -145,9 +160,9 @@ import { MENU } from "@/data/menu"
 		const handleClickOutside = (event) => {
 			const target = event.target
 			if (
-				!menuRoot.contains(target) &&
-				!buttonMenu.contains(target) &&
-				menuRoot.classList.contains("showMenu")
+				!menuRoot?.contains(target) &&
+				!buttonMenu?.contains(target) &&
+				menuRoot?.classList.contains("showMenu")
 			) {
 				closeMenu()
 			}
@@ -173,8 +188,8 @@ import { MENU } from "@/data/menu"
 			}
 		}
 
-		buttonMenu.addEventListener("click", handleMenu)
-		navClose.addEventListener("click", handleMenu)
+		buttonMenu?.addEventListener("click", handleMenu)
+		navClose?.addEventListener("click", handleMenu)
 		window.addEventListener("scroll", handleScroll)
 		window.addEventListener("orientationchange", () => {
 			setTimeout(activateInitialSection, 100)

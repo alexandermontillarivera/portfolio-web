@@ -5,12 +5,14 @@ import Analytics from "@vercel/analytics/astro"
 import Footer from "@/components/footer/Footer.astro"
 import SpeedInsights from "@vercel/speed-insights/astro"
 import { THEME_STORAGE_NAME, THEME, DARK_THEME_CLASS_NAME } from "@/constants"
+import { ClientRouter } from "astro:transitions"
 
 interface Props {
 	content?: boolean
+	hideMenuItems?: boolean
 }
 
-const { content = true } = Astro.props
+const { content = true, hideMenuItems = false } = Astro.props
 ---
 
 <!doctype html>
@@ -37,6 +39,8 @@ const { content = true } = Astro.props
 			property="og:description"
 			content="Alexander Montilla River es un desarrollador Full Stack con sólida experiencia en el desarrollo de aplicaciones web. ¿Quieres saber más sobre él? Visita su portafolio. ✅"
 		/>
+
+		<ClientRouter />
 	</head>
 	<body>
 		<script define:vars={{ THEME_STORAGE_NAME, THEME, DARK_THEME_CLASS_NAME }}>
@@ -60,7 +64,7 @@ const { content = true } = Astro.props
 		{
 			content ? (
 				<>
-					<Menu />
+					<Menu hideMenuItems={hideMenuItems} />
 					<div class="content-wrapper">
 						<main>
 							<slot />
@@ -177,6 +181,12 @@ const { content = true } = Astro.props
 			scrollbar-color: #888 transparent;
 			scrollbar-width: thin;
 		}
+	}
+
+	@font-face {
+		font-family: "Cascadia Code";
+		src: url("/Cascadia.ttf") format("truetype");
+		display: swap;
 	}
 
 	* {

@@ -7,6 +7,7 @@ import Resources from "@/sections/Resources.astro"
 import Projects from "@/sections/Projects.astro"
 import Skills from "@/sections/Skills.astro"
 import Layout from "@/layouts/Layout.astro"
+import Posts from "@/sections/Posts.astro"
 import Hero from "@/sections/Hero.astro"
 import dayjs from "dayjs"
 
@@ -18,7 +19,8 @@ dayjs.locale("es")
 	<Experience />
 	<Projects />
 	<Education />
-	<Skills server:defer />
+	<Skills />
 	<Inspiration />
 	<Resources />
+	<!-- <Posts /> -->
 </Layout>

@@ -7,3 +7,5 @@ export const SPOTIFY_CLIENT_SECRET = String(
 )
 
 export const SPOTIFY_CLIENT_ID = String(import.meta.env.SPOTIFY_CLIENT_ID)
+export const WORDPRESS_SITE_URL = String(import.meta.env.WORDPRESS_SITE_URL)
+export const APP_HOST = String(import.meta.env.APP_HOST)
