@@ -77,6 +77,9 @@ export function Slider({ data }: Props) {
               src={person.image || "/person-placeholder.jpg"}
               alt={person.name}
               className={styles.image}
+              loading="lazy"
+              width={200}
+              height={200}
             />
             <div className={styles.info}>
               <h3>{person.name}</h3>

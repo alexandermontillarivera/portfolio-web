@@ -17,25 +17,24 @@
 .slideContent {
   position: absolute;
   top: 0;
-  left: 100%;
-  right: -100%;
+  left: 0;
+  width: 100%;
+  transform: translateX(100%);
   opacity: 0;
-  transition: all 0.3s ease-out;
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+  will-change: transform, opacity;
 }
 
 .slideContent.active {
-  left: 0;
-  right: 0;
+  transform: translateX(0);
   opacity: 1;
   position: relative;
 }
 
 .slideContent.exit {
-  left: -100%;
-  right: 100%;
+  transform: translateX(-100%);
   opacity: 0;
 }
-
 @keyframes fadeIn {
   0% {
     opacity: 0;

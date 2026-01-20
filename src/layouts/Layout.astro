@@ -1,5 +1,7 @@
 ---
-import "@fontsource/poppins"
+import "@fontsource/poppins/400.css"
+import "@fontsource/poppins/500.css"
+import "@fontsource/poppins/600.css"
 import Menu from "@/components/nav/Menu.astro"
 import Analytics from "@vercel/analytics/astro"
 import Footer from "@/components/footer/Footer.astro"
@@ -39,6 +41,9 @@ const { content = true, hideMenuItems = false } = Astro.props
 			property="og:description"
 			content="Alexander Montilla River es un desarrollador Full Stack con sólida experiencia en el desarrollo de aplicaciones web. ¿Quieres saber más sobre él? Visita su portafolio. ✅"
 		/>
+
+		<!-- Preload Critical Assets for FCP/LCP Optimization -->
+		<link rel="preload" href="/me.png" as="image" fetchpriority="high" />
 
 		<ClientRouter />
 	</head>
