@@ -58,15 +58,17 @@ const { hideMenuItems = false } = Astro.props
 <div id="blurOverlay" class="blur-overlay"></div>
 
 <script lang="ts" defer>
-	document.addEventListener("DOMContentLoaded", () => {
+	document.addEventListener("astro:page-load", () => {
 		const buttonMenu = document.getElementById("buttonMenu")
 		const navClose = document.getElementById("navClose")
 		const menuRoot = document.getElementById("topNav")
-		const menuLinks = menuRoot.querySelectorAll("a")
+		const menuLinks = menuRoot?.querySelectorAll("a")
 		const blurOverlay = document.getElementById("blurOverlay")
 		const contentWrapper = document.querySelector(".content-wrapper")
 		const header = document.querySelector("header")
-		let sections = document.querySelectorAll("section[id]")
+		const sections = document.querySelectorAll("section[id]")
+
+		if (!menuRoot || !header) return
 
 		const handleIntersection = (entries) => {
 			const visibleSections = entries
@@ -100,12 +102,13 @@ const { hideMenuItems = false } = Astro.props
 				const id = mostVisible.target.id
 				const menuLink = document.querySelector(`#topNav a[data-id="#${id}"]`)
 
-				if (menuLink) {
+				if (menuLink && menuLinks) {
 					menuLinks.forEach((link) => link.classList.remove("active"))
 					menuLink.classList.add("active")
 				}
 			}
 		}
+
 		const observer = new IntersectionObserver(handleIntersection, {
 			rootMargin: "-10% 0px -10% 0px",
 			threshold: Array.from({ length: 11 }, (_, i) => i / 10),
@@ -114,8 +117,6 @@ const { hideMenuItems = false } = Astro.props
 		sections.forEach((section) => observer.observe(section))
 
 		const handleScroll = () => {
-			if (!header) return
-
 			const scroll = window.scrollY
 
 			if (scroll >= 10) {
@@ -127,19 +128,19 @@ const { hideMenuItems = false } = Astro.props
 
 		const openMenu = () => {
 			menuRoot.classList.add("showMenu")
-			blurOverlay.classList.add("active")
-			contentWrapper.classList.add("blur-content")
+			blurOverlay?.classList.add("active")
+			contentWrapper?.classList.add("blur-content")
 			document.body.style.overflow = "hidden"
-			buttonMenu.style.opacity = "0"
+			if (buttonMenu) buttonMenu.style.opacity = "0"
 		}
 
 		const closeMenu = () => {
 			menuRoot.classList.remove("showMenu")
 			menuRoot.classList.add("transition-exit")
-			blurOverlay.classList.remove("active")
-			contentWrapper.classList.remove("blur-content")
+			blurOverlay?.classList.remove("active")
+			contentWrapper?.classList.remove("blur-content")
 			document.body.style.overflow = ""
-			buttonMenu.style.opacity = "1"
+			if (buttonMenu) buttonMenu.style.opacity = "1"
 
 			menuRoot.addEventListener(
 				"transitionend",
@@ -160,65 +161,36 @@ const { hideMenuItems = false } = Astro.props
 		const handleClickOutside = (event) => {
 			const target = event.target
 			if (
-				!menuRoot?.contains(target) &&
+				!menuRoot.contains(target) &&
 				!buttonMenu?.contains(target) &&
-				menuRoot?.classList.contains("showMenu")
+				menuRoot.classList.contains("showMenu")
 			) {
 				closeMenu()
-			}
-		}
-
-		const activateInitialSection = () => {
-			const visibleSection = Array.from(sections).find((section) => {
-				const rect = section.getBoundingClientRect()
-				return (
-					rect.top <= window.innerHeight / 2 &&
-					rect.bottom >= window.innerHeight / 2
-				)
-			})
-
-			if (visibleSection) {
-				const menuLink = document.querySelector(
-					`#topNav a[data-id="#${visibleSection.id}"]`,
-				)
-				if (menuLink) {
-					menuLinks.forEach((link) => link.classList.remove("active"))
-					menuLink.classList.add("active")
-				}
 			}
 		}
 
 		buttonMenu?.addEventListener("click", handleMenu)
 		navClose?.addEventListener("click", handleMenu)
 		window.addEventListener("scroll", handleScroll)
-		window.addEventListener("orientationchange", () => {
-			setTimeout(activateInitialSection, 100)
-		})
 		document.addEventListener("click", handleClickOutside)
-		menuLinks.forEach((link) => link.addEventListener("click", handleMenu))
+		menuLinks?.forEach((link) => link.addEventListener("click", handleMenu))
 
-		const reinitializeObserver = () => {
-			sections.forEach((section) => observer.unobserve(section))
+		// Initial scroll check
+		handleScroll()
 
-			const updatedSections = document.querySelectorAll("section[id]")
-
-			updatedSections.forEach((section) => observer.observe(section))
-
-			sections = updatedSections
-		}
-
-		window.addEventListener("load", () => {
-			setTimeout(reinitializeObserver, 300)
-		})
-
-		setTimeout(reinitializeObserver, 1000)
-
-		activateInitialSection()
-
-		document.addEventListener("astro:before-swap", () => {
-			sections.forEach((section) => observer.unobserve(section))
-			observer.disconnect()
-		})
+		// Cleanup for View Transitions
+		document.addEventListener(
+			"astro:before-swap",
+			() => {
+				sections.forEach((section) => observer.unobserve(section))
+				observer.disconnect()
+				window.removeEventListener("scroll", handleScroll)
+				document.removeEventListener("click", handleClickOutside)
+				buttonMenu?.removeEventListener("click", handleMenu)
+				navClose?.removeEventListener("click", handleMenu)
+			},
+			{ once: true },
+		)
 	})
 </script>
 
