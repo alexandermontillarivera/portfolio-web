@@ -13,11 +13,16 @@ const { hideMenuItems = false } = Astro.props
 <div class="header-wrapper">
 	<header>
 		<nav class="nav">
-			<a href="/#" class="navLogo">Alexander Montilla Rivera</a>
-			<div class="navMenu" id="topNav">
+			<a href="/#" class="navLogo" aria-label="Ir al inicio">
+				Alexander Montilla
+			</a>
+			<div class="navMenu" id="topNav" aria-label="Navegación principal">
 				{
 					!hideMenuItems && (
 						<>
+							<div class="sheetHandle" id="sheetHandle" aria-hidden="true">
+								<span />
+							</div>
 							<ul class="navList">
 								{MENU.map((item) => (
 									<li class="navItem">
@@ -31,7 +36,11 @@ const { hideMenuItems = false } = Astro.props
 								))}
 							</ul>
 
-							<button class="navClose" id="navClose">
+							<button
+								class="navClose"
+								id="navClose"
+								aria-label="Cerrar navegación"
+							>
 								<IconX />
 							</button>
 						</>
@@ -44,8 +53,19 @@ const { hideMenuItems = false } = Astro.props
 				{
 					!hideMenuItems && (
 						<div class="navToggle">
-							<button class="button" id="buttonMenu">
-								<IconCategory />
+							<button
+								class="button"
+								id="buttonMenu"
+								aria-label="Abrir navegación"
+								aria-expanded="false"
+								aria-controls="topNav"
+							>
+								<span class="menuIcon menuIconOpen">
+									<IconCategory />
+								</span>
+								<span class="menuIcon menuIconClose">
+									<IconX />
+								</span>
 							</button>
 						</div>
 					)
@@ -57,16 +77,96 @@ const { hideMenuItems = false } = Astro.props
 
 <div id="blurOverlay" class="blur-overlay"></div>
 
-<script lang="ts" defer>
-	document.addEventListener("DOMContentLoaded", () => {
+<script>
+	const initNavigation = () => {
 		const buttonMenu = document.getElementById("buttonMenu")
 		const navClose = document.getElementById("navClose")
 		const menuRoot = document.getElementById("topNav")
-		const menuLinks = menuRoot.querySelectorAll("a")
+		if (!menuRoot) return
+		if (menuRoot.dataset.navigationReady === "true") return
+		menuRoot.dataset.navigationReady = "true"
+		const menuLinks = menuRoot.querySelectorAll<HTMLAnchorElement>("a")
 		const blurOverlay = document.getElementById("blurOverlay")
-		const contentWrapper = document.querySelector(".content-wrapper")
 		const header = document.querySelector("header")
+		const sheetHandle = document.getElementById("sheetHandle")
 		let sections = document.querySelectorAll("section[id]")
+		let currentY = 0
+		let springVelocity = 0
+		let animationFrame = 0
+		let isDragging = false
+		let dragStartY = 0
+		let dragStartSheetY = 0
+		let pointerHistory: Array<{ y: number; time: number }> = []
+		let previousFocus: HTMLElement | null = null
+		let closedY = 0
+
+		const isMobileViewport = () =>
+			window.matchMedia("(max-width: 997.98px)").matches
+
+		const prefersReducedMotion = () =>
+			window.matchMedia("(prefers-reduced-motion: reduce)").matches
+
+		const measureClosedY = () => {
+			closedY = menuRoot.getBoundingClientRect().height + 24
+			return closedY
+		}
+
+		const renderSheet = (value: number) => {
+			currentY = value
+			menuRoot.style.transform = `translate3d(0, ${value}px, 0)`
+
+			const progress =
+				1 - Math.min(Math.max(value / Math.max(closedY, 1), 0), 1)
+			if (blurOverlay) blurOverlay.style.opacity = String(progress)
+		}
+
+		const stopSpring = () => {
+			cancelAnimationFrame(animationFrame)
+			animationFrame = 0
+		}
+
+		const springTo = (
+			target: number,
+			initialVelocity = springVelocity,
+			onComplete?: () => void,
+		) => {
+			stopSpring()
+
+			if (prefersReducedMotion()) {
+				springVelocity = 0
+				renderSheet(target)
+				onComplete?.()
+				return
+			}
+
+			let velocity = initialVelocity
+			let previousTime = performance.now()
+			const stiffness = 1300
+			const damping = 72
+
+			const tick = (time: number) => {
+				const delta = Math.min((time - previousTime) / 1000, 0.032)
+				previousTime = time
+
+				const displacement = currentY - target
+				const acceleration = -stiffness * displacement - damping * velocity
+				velocity += acceleration * delta
+				currentY += velocity * delta
+				springVelocity = velocity
+				renderSheet(currentY)
+
+				if (Math.abs(currentY - target) < 0.5 && Math.abs(velocity) < 8) {
+					springVelocity = 0
+					renderSheet(target)
+					onComplete?.()
+					return
+				}
+
+				animationFrame = requestAnimationFrame(tick)
+			}
+
+			animationFrame = requestAnimationFrame(tick)
+		}
 
 		const handleIntersection = (entries) => {
 			const visibleSections = entries
@@ -126,45 +226,155 @@ const { hideMenuItems = false } = Astro.props
 		}
 
 		const openMenu = () => {
-			menuRoot.classList.add("showMenu")
-			blurOverlay.classList.add("active")
-			contentWrapper.classList.add("blur-content")
+			if (!isMobileViewport() || menuRoot.classList.contains("showMenu")) return
+
+			previousFocus =
+				document.activeElement instanceof HTMLElement
+					? document.activeElement
+					: null
+			menuRoot.classList.add("is-mounted", "showMenu")
+			menuRoot.setAttribute("role", "dialog")
+			menuRoot.setAttribute("aria-modal", "true")
+			menuRoot.setAttribute("aria-hidden", "false")
+			blurOverlay?.classList.add("active")
 			document.body.style.overflow = "hidden"
-			buttonMenu.style.opacity = "0"
+			buttonMenu?.classList.add("is-open")
+			buttonMenu?.setAttribute("aria-label", "Cerrar navegación")
+			buttonMenu?.setAttribute("aria-expanded", "true")
+
+			currentY = measureClosedY()
+			renderSheet(currentY)
+			requestAnimationFrame(() => springTo(0))
+			window.setTimeout(() => menuLinks[0]?.focus(), 80)
 		}
 
-		const closeMenu = () => {
-			menuRoot.classList.remove("showMenu")
-			menuRoot.classList.add("transition-exit")
-			blurOverlay.classList.remove("active")
-			contentWrapper.classList.remove("blur-content")
+		const finishClosing = () => {
+			menuRoot.classList.remove("showMenu", "is-mounted", "is-dragging")
+			menuRoot.setAttribute("aria-hidden", "true")
+			menuRoot.style.removeProperty("transform")
+			blurOverlay?.classList.remove("active")
+			blurOverlay?.style.removeProperty("opacity")
 			document.body.style.overflow = ""
-			buttonMenu.style.opacity = "1"
+			buttonMenu?.classList.remove("is-open")
+			buttonMenu?.setAttribute("aria-label", "Abrir navegación")
+			buttonMenu?.setAttribute("aria-expanded", "false")
+			previousFocus?.focus()
+		}
 
-			menuRoot.addEventListener(
-				"transitionend",
-				() => {
-					menuRoot.classList.remove("transition-exit")
-				},
-				{ once: true },
-			)
+		const syncViewportState = () => {
+			if (isMobileViewport()) {
+				if (!menuRoot.classList.contains("showMenu")) {
+					menuRoot.setAttribute("role", "dialog")
+					menuRoot.setAttribute("aria-modal", "true")
+					menuRoot.setAttribute("aria-hidden", "true")
+				}
+				return
+			}
+
+			stopSpring()
+			menuRoot.classList.remove("showMenu", "is-mounted", "is-dragging")
+			menuRoot.removeAttribute("role")
+			menuRoot.removeAttribute("aria-modal")
+			menuRoot.removeAttribute("aria-hidden")
+			menuRoot.style.removeProperty("transform")
+			blurOverlay?.classList.remove("active")
+			blurOverlay?.style.removeProperty("opacity")
+			document.body.style.overflow = ""
+			buttonMenu?.classList.remove("is-open")
+			buttonMenu?.setAttribute("aria-label", "Abrir navegación")
+			buttonMenu?.setAttribute("aria-expanded", "false")
+		}
+
+		const closeMenu = (velocity = springVelocity) => {
+			if (!menuRoot.classList.contains("showMenu")) return
+			springTo(closedY || measureClosedY(), velocity, finishClosing)
 		}
 
 		const handleMenu = () => {
-			const isMobile = window.matchMedia("(max-width: 998px)").matches
-			if (!isMobile) return
-
+			if (!isMobileViewport()) return
 			menuRoot.classList.contains("showMenu") ? closeMenu() : openMenu()
 		}
 
 		const handleClickOutside = (event) => {
 			const target = event.target
-			if (
-				!menuRoot?.contains(target) &&
-				!buttonMenu?.contains(target) &&
-				menuRoot?.classList.contains("showMenu")
-			) {
+			if (target === blurOverlay && menuRoot?.classList.contains("showMenu")) {
 				closeMenu()
+			}
+		}
+
+		const handlePointerDown = (event: PointerEvent) => {
+			if (!menuRoot.classList.contains("showMenu") || !sheetHandle) return
+			stopSpring()
+			isDragging = true
+			dragStartY = event.clientY
+			dragStartSheetY = currentY
+			pointerHistory = [{ y: event.clientY, time: performance.now() }]
+			menuRoot.classList.add("is-dragging")
+			sheetHandle.setPointerCapture(event.pointerId)
+		}
+
+		const handlePointerMove = (event: PointerEvent) => {
+			if (!isDragging) return
+
+			const rawPosition = dragStartSheetY + event.clientY - dragStartY
+			const sheetHeight = Math.max(closedY - 24, 1)
+			const position =
+				rawPosition < 0
+					? -(
+							(Math.abs(rawPosition) * sheetHeight * 0.28) /
+							(sheetHeight + Math.abs(rawPosition) * 0.28)
+						)
+					: rawPosition
+
+			renderSheet(position)
+			pointerHistory.push({ y: event.clientY, time: performance.now() })
+			pointerHistory = pointerHistory.slice(-5)
+		}
+
+		const handlePointerUp = (event: PointerEvent) => {
+			if (!isDragging || !sheetHandle) return
+			isDragging = false
+			menuRoot.classList.remove("is-dragging")
+			sheetHandle.releasePointerCapture(event.pointerId)
+
+			const first = pointerHistory[0]
+			const last = pointerHistory[pointerHistory.length - 1]
+			const elapsed = Math.max((last.time - first.time) / 1000, 0.016)
+			const velocity = (last.y - first.y) / elapsed
+			const projectedY = currentY + velocity * 0.1
+			const shouldClose =
+				projectedY > menuRoot.getBoundingClientRect().height * 0.28 ||
+				velocity > 650
+
+			if (shouldClose) {
+				closeMenu(velocity)
+			} else {
+				springTo(0, velocity)
+			}
+		}
+
+		const handleKeydown = (event: KeyboardEvent) => {
+			if (!menuRoot.classList.contains("showMenu")) return
+
+			if (event.key === "Escape") {
+				event.preventDefault()
+				closeMenu()
+				return
+			}
+
+			if (event.key !== "Tab") return
+			const focusable = Array.from(
+				menuRoot.querySelectorAll<HTMLElement>("a, button"),
+			).filter((element) => !element.hasAttribute("disabled"))
+			const first = focusable[0]
+			const last = focusable[focusable.length - 1]
+
+			if (event.shiftKey && document.activeElement === first) {
+				event.preventDefault()
+				last?.focus()
+			} else if (!event.shiftKey && document.activeElement === last) {
+				event.preventDefault()
+				first?.focus()
 			}
 		}
 
@@ -190,11 +400,17 @@ const { hideMenuItems = false } = Astro.props
 
 		buttonMenu?.addEventListener("click", handleMenu)
 		navClose?.addEventListener("click", handleMenu)
+		sheetHandle?.addEventListener("pointerdown", handlePointerDown)
+		sheetHandle?.addEventListener("pointermove", handlePointerMove)
+		sheetHandle?.addEventListener("pointerup", handlePointerUp)
+		sheetHandle?.addEventListener("pointercancel", handlePointerUp)
 		window.addEventListener("scroll", handleScroll)
+		window.addEventListener("resize", syncViewportState)
 		window.addEventListener("orientationchange", () => {
 			setTimeout(activateInitialSection, 100)
 		})
 		document.addEventListener("click", handleClickOutside)
+		document.addEventListener("keydown", handleKeydown)
 		menuLinks.forEach((link) => link.addEventListener("click", handleMenu))
 
 		const reinitializeObserver = () => {
@@ -213,44 +429,48 @@ const { hideMenuItems = false } = Astro.props
 
 		setTimeout(reinitializeObserver, 1000)
 
+		syncViewportState()
 		activateInitialSection()
 
 		document.addEventListener("astro:before-swap", () => {
 			sections.forEach((section) => observer.unobserve(section))
 			observer.disconnect()
 		})
-	})
+	}
+
+	document.addEventListener("astro:page-load", initNavigation)
+	initNavigation()
 </script>
 
 <style>
 	.header-wrapper {
-		position: relative;
+		position: fixed;
+		inset: 0 0 auto;
 		z-index: 100;
 	}
 
 	.blur-overlay {
-		display: none;
 		position: fixed;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background: rgba(0, 0, 0, 0.5);
-		backdrop-filter: blur(4px);
+		inset: 0;
+		background: rgba(12, 10, 9, 0.48);
 		z-index: 98;
 		opacity: 0;
-		transition: opacity 0.3s ease;
+		visibility: hidden;
+		pointer-events: none;
 	}
 
 	.blur-overlay.active {
-		display: block;
-		opacity: 1;
+		visibility: visible;
+		pointer-events: auto;
 	}
 
 	button {
 		background-color: transparent;
 		border: none;
-		transition: all 0.3s ease;
+		transition:
+			color 0.16s ease,
+			transform 0.16s ease,
+			background-color 0.16s ease;
 		opacity: 1;
 		color: var(--title-color);
 	}
@@ -258,19 +478,18 @@ const { hideMenuItems = false } = Astro.props
 	button:hover {
 		cursor: pointer;
 		color: var(--first-color);
-		opacity: 0.7;
 	}
 
 	header {
-		position: fixed;
-		top: 0;
-		background-color: var(--body-color);
+		background-color: color-mix(in srgb, var(--body-color) 92%, transparent);
 		width: 100%;
 		z-index: 100;
+		border-bottom: 1px solid transparent;
 	}
 
 	nav {
 		max-width: 1200px;
+		width: 100%;
 		height: var(--header-height);
 		display: flex;
 		justify-content: space-between;
@@ -284,6 +503,24 @@ const { hideMenuItems = false } = Astro.props
 		font-weight: var(--font-medium);
 	}
 
+	.navLogo {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+	.navLogo span {
+		display: grid;
+		place-items: center;
+		width: 2.1rem;
+		aspect-ratio: 1;
+		background: var(--title-color);
+		color: var(--body-color);
+		border-radius: 6px;
+		font-family: "Cascadia Code", monospace;
+		font-size: 0.75rem;
+	}
+
 	.navLogo:hover {
 		color: var(--first-color);
 	}
@@ -294,15 +531,11 @@ const { hideMenuItems = false } = Astro.props
 	}
 
 	.scrollShadow {
-		box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.15);
+		border-bottom-color: var(--border-color);
 	}
 
 	.navLink.active {
 		color: var(--first-color);
-	}
-
-	body.darkTheme .scrollShadow {
-		box-shadow: 0 -1px 4px rgba(255, 252, 252, 0.25);
 	}
 
 	@media screen and (max-width: 1248px) {
@@ -312,52 +545,120 @@ const { hideMenuItems = false } = Astro.props
 	}
 
 	@media screen and (max-width: 998px) {
-		header {
-			position: fixed;
-			top: unset;
-			bottom: 0;
-			width: 100%;
-			border-top: 1px solid var(--border-color);
+		.navLogo {
+			font-size: 0.9rem;
 		}
 
 		.navMenu {
 			position: fixed;
-			bottom: -100%;
-			left: 0;
-			width: 100%;
-			background-color: var(--body-color);
-			padding: 2rem 1.5rem 4rem;
-			box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.15);
-			border-radius: 1.5rem 1.5rem 0 0;
-			transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+			inset: auto 0.75rem max(0.75rem, env(safe-area-inset-bottom));
+			max-height: min(76dvh, 44rem);
+			overflow-y: auto;
+			overscroll-behavior: contain;
+			background-color: color-mix(
+				in srgb,
+				var(--container-color) 96%,
+				transparent
+			);
+			backdrop-filter: blur(24px) saturate(140%);
+			padding: 0.5rem 1rem max(1.25rem, env(safe-area-inset-bottom));
+			border-radius: 18px;
+			box-shadow: 0 -12px 32px rgba(20, 13, 9, 0.2);
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
-			transform: translateY(100%);
-			opacity: 0;
+			transform: translate3d(0, calc(100% + 2rem), 0);
+			visibility: hidden;
 			z-index: 99;
+			will-change: transform;
+			touch-action: pan-y;
+		}
+
+		.navMenu.is-mounted {
+			visibility: visible;
+		}
+
+		.navMenu.is-dragging {
+			user-select: none;
+			cursor: grabbing;
+		}
+
+		.sheetHandle {
+			display: grid;
+			place-items: center;
+			width: 100%;
+			height: 2rem;
+			flex: 0 0 auto;
+			cursor: grab;
+			touch-action: none;
+		}
+
+		.sheetHandle span {
+			width: 2.75rem;
+			height: 0.3rem;
+			border-radius: 999px;
+			background: color-mix(in srgb, var(--text-color) 35%, transparent);
 		}
 
 		nav {
 			padding: 0px 1em;
-			height: calc(var(--header-height) + 1.5rem);
+			height: 4.25rem;
 		}
 
 		.navBtns {
 			display: flex;
 			gap: var(--gap-1);
 			align-items: center;
+			flex-shrink: 0;
 		}
 
 		.navBtns div {
 			display: flex;
 		}
 
+		#buttonMenu {
+			position: relative;
+			display: grid;
+			width: 2.75rem;
+			height: 2.75rem;
+			place-items: center;
+			border-radius: 50%;
+		}
+
+		#buttonMenu.is-open {
+			background: var(--container-color);
+			color: var(--first-color);
+			transform: rotate(90deg);
+		}
+
+		.menuIcon {
+			grid-area: 1 / 1;
+			display: grid;
+			place-items: center;
+			transition:
+				opacity 0.14s ease,
+				transform 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+		}
+
+		.menuIconClose {
+			opacity: 0;
+			transform: scale(0.7) rotate(-90deg);
+		}
+
+		#buttonMenu.is-open .menuIconOpen {
+			opacity: 0;
+			transform: scale(0.7) rotate(90deg);
+		}
+
+		#buttonMenu.is-open .menuIconClose {
+			opacity: 1;
+			transform: scale(1) rotate(-90deg);
+		}
+
 		.navClose {
 			color: var(--first-color);
-			margin-top: 4rem;
 			background-color: var(--constras-color);
-			margin: 0px auto;
+			margin: 1.5rem auto 0.25rem;
 			max-width: fit-content;
 			display: flex;
 			justify-content: center;
@@ -366,10 +667,9 @@ const { hideMenuItems = false } = Astro.props
 			padding: 0.5rem;
 			width: 40px;
 			height: 40px;
-		}
-
-		.showMenu .navClose {
-			bottom: calc(100vh - 4rem);
+			transition:
+				transform 0.16s ease,
+				background-color 0.16s ease;
 		}
 	}
 
@@ -385,7 +685,7 @@ const { hideMenuItems = false } = Astro.props
 		font-size: var(--small-font-size);
 		color: var(--title-color);
 		font-weight: var(--font-medium);
-		transition: color 0.3s ease;
+		transition: color 0.2s ease;
 	}
 
 	.navLink:hover {
@@ -403,7 +703,8 @@ const { hideMenuItems = false } = Astro.props
 
 	@media screen and (max-width: 350px) {
 		.navMenu {
-			padding: 2rem 0.25rem 4rem;
+			inset-inline: 0.5rem;
+			padding-inline: 0.5rem;
 		}
 
 		.navList {
@@ -413,13 +714,18 @@ const { hideMenuItems = false } = Astro.props
 
 	@media screen and (min-width: 998px) {
 		nav {
-			height: calc(var(--header-height) + 1.5rem);
+			height: 4.5rem;
 			column-gap: 1rem;
 		}
 
 		.navIcon,
 		.navClose,
-		.navToggle {
+		.navToggle,
+		.sheetHandle {
+			display: none;
+		}
+
+		.menuIconClose {
 			display: none;
 		}
 
@@ -433,23 +739,72 @@ const { hideMenuItems = false } = Astro.props
 		}
 	}
 
-	.showMenu {
-		bottom: 0 !important;
-		transform: translateY(0) !important;
-		opacity: 1 !important;
-	}
-
 	.showMenu ul {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-		margin-bottom: 4rem;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: clamp(1.1rem, 4vh, 2rem) 0.75rem;
+		margin-bottom: 0;
 	}
 
-	.navMenu.transition-exit {
-		transform: translateY(100%);
-		opacity: 0;
-		transition:
-			transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-			opacity 0.3s ease;
+	.showMenu .navLink {
+		min-height: 4.25rem;
+		justify-content: center;
+		gap: 0.3rem;
+		padding: 0.5rem;
+		border-radius: 10px;
+	}
+
+	.showMenu .navLink:active {
+		background: var(--constras-color);
+		transform: scale(0.97);
+	}
+
+	.showMenu .navIcon {
+		display: grid;
+		place-items: center;
+		font-size: 1.35rem;
+	}
+
+	@media screen and (max-height: 680px) and (max-width: 997.98px) {
+		.navMenu {
+			max-height: calc(100dvh - var(--header-height) - 1rem);
+		}
+
+		.showMenu ul {
+			gap: 0.5rem;
+		}
+
+		.showMenu .navLink {
+			min-height: 3.6rem;
+		}
+
+		.navClose {
+			margin-top: 0.75rem;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) and (max-width: 997.98px) {
+		.navMenu {
+			will-change: auto;
+		}
+	}
+
+	@media (prefers-reduced-transparency: reduce) {
+		header,
+		.navMenu {
+			background: var(--body-color);
+			backdrop-filter: none;
+		}
+
+		.blur-overlay {
+			background: rgba(12, 10, 9, 0.62);
+		}
+	}
+
+	@media (prefers-contrast: more) {
+		.navMenu {
+			outline: 2px solid var(--title-color);
+			background: var(--body-color);
+		}
 	}
 </style>

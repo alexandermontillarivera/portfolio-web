@@ -3,6 +3,7 @@ import "@fontsource/poppins"
 import Menu from "@/components/nav/Menu.astro"
 import Analytics from "@vercel/analytics/astro"
 import Footer from "@/components/footer/Footer.astro"
+import FloatingControls from "@/components/elements/FloatingControls.astro"
 import SpeedInsights from "@vercel/speed-insights/astro"
 import { THEME_STORAGE_NAME, THEME, DARK_THEME_CLASS_NAME } from "@/constants"
 import { ClientRouter } from "astro:transitions"
@@ -18,15 +19,16 @@ const { content = true, hideMenuItems = false } = Astro.props
 <!doctype html>
 <html lang="es">
 	<head>
-		<title>Alexander Montilla Rivera</title>
+		<title>Alexander Montilla — Desarrollador Full Stack</title>
 		<meta charset="UTF-8" />
 		<link rel="icon" type="image/png" href="/favicon.png" />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="theme-color" content="#f36f2b" />
 		<meta name="generator" content={Astro.generator} />
 		<meta name="title" content="Alexander Montilla Rivera 👨‍💻" />
 		<meta
 			name="description"
-			content="Alexander Montilla River es un desarrollador Full Stack con sólida experiencia en el desarrollo de aplicaciones web. ¿Quieres saber más sobre él? Visita su portafolio. ✅"
+			content="Portfolio de Alexander Montilla, desarrollador Full Stack especializado en crear productos web rápidos, mantenibles y centrados en las personas."
 		/>
 		<meta
 			name="keywords"
@@ -37,12 +39,15 @@ const { content = true, hideMenuItems = false } = Astro.props
 		<meta property="og:title" content="Alexander Montilla Rivera 👨‍💻" />
 		<meta
 			property="og:description"
-			content="Alexander Montilla River es un desarrollador Full Stack con sólida experiencia en el desarrollo de aplicaciones web. ¿Quieres saber más sobre él? Visita su portafolio. ✅"
+			content="Desarrollador Full Stack. Productos web rápidos, mantenibles y centrados en las personas."
 		/>
+		<meta property="og:image" content="https://alexandermontillarivera.com/me.png" />
+		<meta name="twitter:card" content="summary_large_image" />
 
 		<ClientRouter />
 	</head>
 	<body>
+		<a class="skip-link" href="#main-content">Saltar al contenido</a>
 		<script define:vars={{ THEME_STORAGE_NAME, THEME, DARK_THEME_CLASS_NAME }}>
 			const theme = (() => {
 				const currentTheme = localStorage.getItem(THEME_STORAGE_NAME)
@@ -66,13 +71,12 @@ const { content = true, hideMenuItems = false } = Astro.props
 				<>
 					<Menu hideMenuItems={hideMenuItems} />
 					<div class="content-wrapper">
-						<main>
+						<main id="main-content">
 							<slot />
 						</main>
 					</div>
-
-					<div class="blur-overlay" id="blurOverlay" />
 					<Footer server:defer />
+					<FloatingControls />
 				</>
 			) : (
 				<slot />
@@ -86,23 +90,23 @@ const { content = true, hideMenuItems = false } = Astro.props
 
 <style is:global>
 	:root {
-		--header-height: 3rem;
+		--header-height: 4.75rem;
 		--hue-color: 28;
-		--first-color: hsl(var(--hue-color), 69%, 61%);
-		--first-color-second: hsl(var(--hue-color), 69%, 61%);
-		--first-color-alt: hsl(var(--hue-color), 57%, 53%);
-		--first-color-lighter: hsl(var(--hue-color), 92%, 85%);
-		--title-color: hsl(var(--hue-color), 8%, 15%);
-		--text-color: hsl(var(--hue-color), 8%, 45%);
-		--text-color-light: hsl(var(--hue-color), 8%, 65%);
-		--input-color: hsl(var(--hue-color), 70%, 96%);
-		--body-color: hsl(var(--hue-color), 60%, 99%);
-		--border-color: hsl(180deg 1% 80% / 25%);
-		--container-color: #fff;
+		--first-color: #c34708;
+		--first-color-second: #c34708;
+		--first-color-alt: #b83f05;
+		--first-color-lighter: #ffd9c5;
+		--title-color: #171513;
+		--text-color: #5a5550;
+		--text-color-light: #706a64;
+		--input-color: #f4f1ee;
+		--body-color: #f8f7f5;
+		--border-color: rgba(55, 45, 38, 0.2);
+		--container-color: #ffffff;
 		--scroll-bar-color: hsl(var(--hue-color), 12%, 90%);
 		--scroll-thumb-color: hsl(var(--hue-color), 12%, 80%);
 		--body-font: "Poppins", sans-serif;
-		--big-font-size: 2rem;
+		--big-font-size: clamp(3rem, 7vw, 5.75rem);
 		--h1-font-size: 1.5rem;
 		--h2-font-size: 1.25rem;
 		--h3-font-size: 1.125rem;
@@ -126,9 +130,10 @@ const { content = true, hideMenuItems = false } = Astro.props
 		--z-tooltip: 10;
 		--z-fixed: 100;
 		--z-modal: 1000;
-		--constras-color: hsl(28deg 100% 93.14% / 41%);
-		--box-shadow: 0 0px 4px rgba(0, 0, 0, 0.15);
-		--box-shadow-hover: 0 0 10px rgba(0, 0, 0, 0.1);
+		--constras-color: #eee7e1;
+		--box-shadow: 0 1px 3px rgba(65, 38, 22, 0.1);
+		--box-shadow-hover: 0 4px 8px rgba(65, 38, 22, 0.12);
+		--section-space: clamp(6rem, 11vw, 10rem);
 	}
 
 	@media screen and (min-width: 968px) {
@@ -144,16 +149,19 @@ const { content = true, hideMenuItems = false } = Astro.props
 	}
 
 	body.darkTheme {
-		--first-color-second: hsl(var(--hue-color), 30%, 8%);
-		--title-color: hsl(var(--hue-color), 8%, 95%);
-		--text-color: hsl(var(--hue-color), 8%, 75%);
-		--input-color: hsl(var(--hue-color), 29%, 16%);
-		--body-color: hsl(var(--hue-color), 28%, 12%);
-		--container-color: hsl(var(--hue-color), 29%, 16%);
+		--first-color: #ff8b4f;
+		--first-color-alt: #ffab7d;
+		--first-color-second: #ff8b4f;
+		--title-color: #f6f3f0;
+		--text-color: #c3bdb7;
+		--text-color-light: #aaa29a;
+		--input-color: #25211e;
+		--body-color: #171513;
+		--container-color: #211e1b;
 		--scroll-bar-color: hsl(var(--hue-color), 12%, 48%);
 		--scroll-thumb-color: hsl(var(--hue-color), 12%, 36%);
-		--border-color: hsla(180, 2%, 80%, 0.192);
-		--constras-color: hsl(28deg 26.22% 20.41%);
+		--border-color: rgba(255, 243, 235, 0.14);
+		--constras-color: #302720;
 	}
 
 	@supports selector(::-webkit-scrollbar) {
@@ -197,14 +205,19 @@ const { content = true, hideMenuItems = false } = Astro.props
 
 	html {
 		scroll-behavior: smooth;
+		scroll-padding-top: calc(var(--header-height) + 1rem);
 	}
 
 	body {
-		margin: 0 0 var(--header-height) 0;
+		margin: 0;
 		font-family: var(--body-font);
 		font-size: var(--normal-font-size);
 		background-color: var(--body-color);
 		color: var(--text-color);
+		line-height: 1.7;
+		-webkit-font-smoothing: antialiased;
+		transition: background-color 0.25s ease, color 0.25s ease;
+		overflow-x: clip;
 	}
 
 	h1,
@@ -213,6 +226,13 @@ const { content = true, hideMenuItems = false } = Astro.props
 	h4 {
 		color: var(--title-color);
 		font-weight: var(--font-semi-bold);
+		line-height: 1.12;
+		letter-spacing: -0.025em;
+		text-wrap: balance;
+	}
+
+	p {
+		text-wrap: pretty;
 	}
 
 	ul {
@@ -221,6 +241,15 @@ const { content = true, hideMenuItems = false } = Astro.props
 
 	a {
 		text-decoration: none;
+	}
+
+	a, button {
+		-webkit-tap-highlight-color: transparent;
+	}
+
+	:focus-visible {
+		outline: 3px solid var(--first-color);
+		outline-offset: 4px;
 	}
 
 	img {
@@ -232,20 +261,15 @@ const { content = true, hideMenuItems = false } = Astro.props
 		display: block;
 		margin: 0 auto;
 		max-width: 1200px;
-		padding: 0px 0px 40px 0px;
+		padding: 0 0 var(--section-space);
 	}
 
 	section {
-		min-height: 100vh;
-		padding-top: 100px;
+		padding-top: var(--section-space);
 	}
 
 	section:first-child {
-		padding-top: 0px;
-	}
-
-	section:last-child {
-		min-height: fit-content;
+		padding-top: var(--header-height);
 	}
 
 	@media screen and (max-width: 1248px) {
@@ -255,42 +279,44 @@ const { content = true, hideMenuItems = false } = Astro.props
 	}
 
 	.content-wrapper {
-		transition: filter 0.4s ease;
+		transition:
+			filter 0.18s ease,
+			transform 0.18s ease;
 		min-height: 100vh;
 		position: relative;
 		z-index: 1;
-		overflow: hidden;
+		overflow: clip;
 	}
 
-	.blur-content {
-		filter: blur(8px);
-		pointer-events: none;
+	::selection {
+		background: var(--first-color);
+		color: #fff;
 	}
 
-	.blur-overlay {
+	.skip-link {
 		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		background-color: rgba(0, 0, 0, 0.6);
-		backdrop-filter: blur(8px);
-		z-index: 98;
-		opacity: 0;
-		visibility: hidden;
-		transition:
-			opacity 0.4s ease,
-			visibility 0.4s ease;
+		z-index: 1000;
+		top: 0.75rem;
+		left: 0.75rem;
+		padding: 0.75rem 1rem;
+		background: var(--title-color);
+		color: var(--body-color);
+		transform: translateY(-150%);
 	}
 
-	.blur-overlay.active {
-		opacity: 1;
-		visibility: visible;
+	.skip-link:focus {
+		transform: translateY(0);
 	}
 
-	@media screen and (max-width: 999px) {
-		main {
-			padding-bottom: 100px;
+	@media (prefers-reduced-motion: reduce) {
+		html {
+			scroll-behavior: auto;
+		}
+
+		*, *::before, *::after {
+			animation-duration: 0.01ms !important;
+			animation-iteration-count: 1 !important;
+			transition-duration: 0.01ms !important;
 		}
 	}
 </style>

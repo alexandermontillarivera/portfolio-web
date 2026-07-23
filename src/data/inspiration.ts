@@ -4,7 +4,7 @@ export const PEOPLE: ISliderItem[] = [
 	{
 		id: 1,
 		name: "Ryan Dahl",
-		image: "/images/people/ryan-dahl.png",
+		image: "/images/people/ryan-dahl.webp",
 		comment: `
       Creador de Node.js y Deno. Me inspira su capacidad para crear tecnologías 
       que cambiaron la forma en que desarrollamos aplicaciones web del lado del 
@@ -15,7 +15,7 @@ export const PEOPLE: ISliderItem[] = [
 	{
 		id: 2,
 		name: "Grace Hopper",
-		image: "/images/people/grace-hopper.jpeg",
+		image: "/images/people/grace-hopper.webp",
 		comment: `
       Pionera en el mundo de la informática y creadora del primer compilador 
       para un lenguaje de programación. Me inspira su capacidad para superar 
@@ -26,7 +26,7 @@ export const PEOPLE: ISliderItem[] = [
 	{
 		id: 3,
 		name: "Steve Jobs",
-		image: "/images/people/steve-jobs.jpeg",
+		image: "/images/people/steve-jobs.webp",
 		comment: `
       Fundador de Apple, una de las empresas más innovadoras y exitosas de la
       historia. Aunque no es programador, me encanta su enfoque en la simplicidad
@@ -37,7 +37,7 @@ export const PEOPLE: ISliderItem[] = [
 	{
 		id: 4,
 		name: "Bill Gates",
-		image: "/images/people/bill-gates.jpeg",
+		image: "/images/people/bill-gates.webp",
 		comment: `
       Fundador de Microsoft y uno de los hombres más ricos del mundo, Bill Gates demostró que 
       las habilidades técnicas no son suficientes para triunfar en el mundo de la tecnología.
@@ -47,7 +47,7 @@ export const PEOPLE: ISliderItem[] = [
 	{
 		id: 5,
 		name: "Guido van Rossum",
-		image: "/images/people/guido-van-rossum.jpg",
+		image: "/images/people/guido-van-rossum.webp",
 		comment: `
       Creador de Python, uno de los lenguajes de programación más populares y
       versátiles del mundo. El simple hecho de crear un lenguaje con la filosofía

@@ -5,12 +5,14 @@ import { IconArrowRight } from "@tabler/icons-react"
 
 interface Props {
 	data: IProject
+	featured?: boolean
 }
 
 const { title, description, technologies, image, url } = Astro.props.data
+const { featured = false } = Astro.props
 ---
 
-<a href={url} class="project-card" target="_blank">
+<a href={url} class:list={["project-card", { featured }]} target="_blank" rel="noreferrer" aria-label={`Ver proyecto ${title}`}>
 	<header class="image-container">
 		<img src={image} alt={title} loading="lazy" />
 	</header>
@@ -20,39 +22,39 @@ const { title, description, technologies, image, url } = Astro.props.data
 		<div class="technologies">
 			{technologies.map((tech) => <Tag>{tech}</Tag>)}
 		</div>
+		<span class="project-link">Abrir proyecto <IconArrowRight /></span>
 	</div>
 </a>
 
 <style>
 	.project-card {
-		display: block;
-		background-color: var(--container-color);
-		border-radius: 12px;
-		overflow: hidden;
-		box-shadow: var(--box-shadow);
+		display: grid;
+		grid-template-rows: auto 1fr;
 		transition:
-			transform 0.3s ease,
-			box-shadow 0.3s ease;
+			transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 		text-decoration: none;
 		color: inherit;
 	}
 
 	.project-card:hover {
-		transform: translateY(-5px);
-		box-shadow: var(--box-shadow-hover);
+		transform: translateY(-6px);
 	}
 
 	.image-container {
 		width: 100%;
-		height: 350px;
+		aspect-ratio: 16 / 9;
 		overflow: hidden;
+		padding: clamp(0.65rem, 2vw, 1rem);
+		border-radius: 14px;
+		background: var(--constras-color);
 	}
 
 	.image-container img {
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
-		transition: transform 0.3s ease;
+		border-radius: 8px;
+		transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 	}
 
 	.project-card:hover .image-container img {
@@ -60,13 +62,15 @@ const { title, description, technologies, image, url } = Astro.props.data
 	}
 
 	.content {
-		padding: 1.5rem;
+		display: flex;
+		flex-direction: column;
+		padding: 1.25rem 0.25rem 0;
 	}
 
 	h3 {
 		margin: 0;
 		font-size: 1.5rem;
-		color: var(--first-color);
+		color: var(--title-color);
 		margin-bottom: 0.75rem;
 	}
 
@@ -80,6 +84,36 @@ const { title, description, technologies, image, url } = Astro.props.data
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.5rem;
-		margin-bottom: 1rem;
+		margin-bottom: 1.5rem;
+	}
+
+	.project-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		margin-top: auto;
+		color: var(--first-color);
+		font-weight: 600;
+	}
+
+	@media (min-width: 900px) {
+		.project-card.featured {
+			grid-template-columns: minmax(0, 1.45fr) minmax(18rem, 0.55fr);
+			grid-template-rows: 1fr;
+			gap: clamp(2rem, 5vw, 4rem);
+			align-items: center;
+		}
+
+		.project-card.featured .content {
+			padding: 1rem 0;
+		}
+	}
+
+	.project-link :global(svg) {
+		transition: transform 0.2s ease;
+	}
+
+	.project-card:hover .project-link :global(svg) {
+		transform: translateX(4px);
 	}
 </style>

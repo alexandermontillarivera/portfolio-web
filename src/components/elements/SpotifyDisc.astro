@@ -1,88 +1,272 @@
 ---
-import type SpotifyCurrentPlaying from "@/interfaces/Spotify"
-import { getSpotifyCurrentPlayService } from "@/services/spotify"
-import Tooltip from "@/components/elements/Tooltip.astro"
 import { IconBrandSpotifyFilled } from "@tabler/icons-react"
-
-let song: SpotifyCurrentPlaying | null = null
-
-try {
-	song = await getSpotifyCurrentPlayService()
-} catch {}
-
-const id = crypto.randomUUID()
 ---
 
-{
-	song && song.is_playing && (
-		<div class="container">
-			<Tooltip text={`Escuchando ${song.item.name} en Spotify`}>
-				<button class="disc" id={id}>
-					<div class="icon">
-						<IconBrandSpotifyFilled size={45} />
-					</div>
-				</button>
-			</Tooltip>
-		</div>
-	)
-}
-
-<script
-	is:inline
-	define:vars={{
-		id,
-		url: song?.item.external_urls.spotify,
-	}}
+<a
+	id="spotify-now-playing"
+	class="now-playing"
+	href="https://open.spotify.com/"
+	target="_blank"
+	rel="noreferrer"
+	data-spotify-player
+	hidden
 >
-	const button = document.getElementById(id)
+	<div class="cover">
+		<img data-spotify-image src="" alt="" width="52" height="52" hidden />
+		<span data-spotify-fallback>
+			<IconBrandSpotifyFilled size={26} />
+		</span>
+		<span class="equalizer" aria-hidden="true">
+			<i></i>
+			<i></i>
+			<i></i>
+		</span>
+	</div>
+	<span class="song">
+		<small>Escuchando ahora</small>
+		<strong data-spotify-title></strong>
+		<span data-spotify-subtitle></span>
+	</span>
+</a>
 
-	button?.addEventListener("click", () => {
-		window.open(url, "_blank")
-	})
+<script>
+	interface SpotifyPlayerResponse {
+		isPlaying: boolean
+		item: {
+			title: string
+			subtitle: string
+			url: string
+			imageUrl: string | null
+		} | null
+	}
+
+	const initSpotifyPlayer = () => {
+		const player = document.querySelector<HTMLAnchorElement>(
+			"[data-spotify-player]",
+		)
+
+		if (!player || player.dataset.initialized === "true") return
+
+		player.dataset.initialized = "true"
+		const container = player.closest<HTMLElement>(".spotifyContainer")
+		const image = player.querySelector<HTMLImageElement>("[data-spotify-image]")
+		const fallback = player.querySelector<HTMLElement>(
+			"[data-spotify-fallback]",
+		)
+		const title = player.querySelector<HTMLElement>("[data-spotify-title]")
+		const subtitle = player.querySelector<HTMLElement>(
+			"[data-spotify-subtitle]",
+		)
+
+		const hidePlayer = () => {
+			player.hidden = true
+			if (container) container.hidden = true
+		}
+
+		const updatePlayer = async () => {
+			try {
+				const response = await fetch("/api/spotify/now-playing", {
+					cache: "no-store",
+					headers: { Accept: "application/json" },
+				})
+				const playback = (await response.json()) as SpotifyPlayerResponse
+
+				if (!playback.isPlaying || !playback.item) {
+					hidePlayer()
+					return
+				}
+
+				player.href = playback.item.url
+				player.setAttribute(
+					"aria-label",
+					`Escuchar ${playback.item.title} de ${playback.item.subtitle} en Spotify`,
+				)
+				if (title) title.textContent = playback.item.title
+				if (subtitle) subtitle.textContent = playback.item.subtitle
+
+				if (image && fallback) {
+					if (playback.item.imageUrl) {
+						image.src = playback.item.imageUrl
+						image.hidden = false
+						fallback.hidden = true
+					} else {
+						image.removeAttribute("src")
+						image.hidden = true
+						fallback.hidden = false
+					}
+				}
+
+				player.hidden = false
+				if (container) container.hidden = false
+			} catch {
+				hidePlayer()
+			}
+		}
+
+		void updatePlayer()
+		const interval = window.setInterval(updatePlayer, 30_000)
+
+		document.addEventListener(
+			"astro:before-swap",
+			() => window.clearInterval(interval),
+			{ once: true },
+		)
+	}
+
+	document.addEventListener("astro:page-load", initSpotifyPlayer)
+	initSpotifyPlayer()
 </script>
 
 <style>
-	.container {
-		position: relative;
-	}
-
-	.icon {
-		width: 45px;
-		height: 45px;
-		color: var(--body-color);
-		background-color: var(--first-color);
-	}
-
-	.disc {
-		width: 2rem;
-		height: 2rem;
-		border-radius: 50%;
-		overflow: hidden;
-		display: flex;
+	.now-playing {
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr) auto;
 		align-items: center;
-		justify-content: center;
+		gap: 0.7rem;
+		width: 100%;
+		padding: 0.5rem;
+		border-radius: 14px;
+		background: color-mix(in srgb, var(--container-color) 90%, transparent);
+		backdrop-filter: blur(18px) saturate(145%);
+		box-shadow: 0 5px 14px rgba(23, 16, 12, 0.16);
+		color: var(--text-color);
+		transition:
+			transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+			background-color 0.25s ease;
+	}
+
+	.now-playing[hidden] {
+		display: none;
+	}
+
+	a.now-playing:hover {
+		transform: translateY(-2px);
+		background: var(--constras-color);
+	}
+
+	.cover {
 		position: relative;
-		color: var(--body-color);
-		cursor: pointer;
-		animation: spin 4s linear infinite;
-		background-color: transparent;
-		border: none;
+		display: grid;
+		place-items: center;
+		width: 3.25rem;
+		aspect-ratio: 1;
+		flex: 0 0 auto;
+		overflow: hidden;
+		border-radius: 8px;
+		background: #1ed760;
+		color: #101010;
 	}
 
-	.disc:hover {
-		transform: scale(1.1);
+	.cover img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
 	}
 
-	.container:hover .disc {
-		animation: none;
+	.cover [hidden] {
+		display: none;
 	}
 
-	@keyframes spin {
+	.song {
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+		line-height: 1.3;
+	}
+
+	.song small {
+		color: #16853d;
+		font-size: 0.65rem;
+		font-weight: 700;
+	}
+
+	.song strong,
+	.song > span {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.song strong {
+		margin-top: 0.15rem;
+		color: var(--title-color);
+		font-size: 0.78rem;
+	}
+
+	.song > span {
+		margin-top: 0.1rem;
+		color: var(--text-color-light);
+		font-size: 0.65rem;
+	}
+
+	.equalizer {
+		position: absolute;
+		right: 0.25rem;
+		bottom: 0.25rem;
+		display: flex;
+		align-items: end;
+		gap: 2px;
+		height: 0.8rem;
+		padding: 0.18rem;
+		border-radius: 3px;
+		background: rgba(10, 10, 10, 0.82);
+	}
+
+	.equalizer i {
+		display: block;
+		width: 2px;
+		height: 100%;
+		background: #1ed760;
+		transform-origin: bottom;
+		animation: sound 0.8s ease-in-out infinite alternate;
+	}
+
+	.equalizer i:nth-child(2) {
+		animation-delay: -0.25s;
+	}
+
+	.equalizer i:nth-child(3) {
+		animation-delay: -0.5s;
+	}
+
+	@keyframes sound {
 		from {
-			transform: rotate(0deg);
+			transform: scaleY(0.3);
 		}
 		to {
-			transform: rotate(360deg);
+			transform: scaleY(1);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.equalizer i {
+			animation: none;
+			transform: scaleY(0.65);
+		}
+	}
+
+	@media (prefers-reduced-transparency: reduce) {
+		.now-playing {
+			background: var(--container-color);
+			backdrop-filter: none;
+		}
+	}
+
+	@media screen and (max-width: 420px) {
+		.cover {
+			width: 2.75rem;
+		}
+
+		.song small {
+			font-size: 0.6rem;
+		}
+
+		.song strong {
+			font-size: 0.72rem;
+		}
+
+		.song > span {
+			font-size: 0.6rem;
 		}
 	}
 </style>

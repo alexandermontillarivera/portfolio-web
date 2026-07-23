@@ -1,0 +1,445 @@
+---
+import SpotifyDisc from "@/components/elements/SpotifyDisc.astro"
+import {
+	IconArrowUp,
+	IconChevronRight,
+	IconMinus,
+} from "@tabler/icons-react"
+---
+
+<aside class="floating-controls" data-floating-controls aria-label="Controles rápidos">
+	<div class="spotifyContainer" hidden>
+		<div class="spotify-shell" data-spotify-shell>
+			<SpotifyDisc />
+			<button
+				class="spotify-toggle"
+				type="button"
+				data-spotify-toggle
+				aria-controls="spotify-now-playing"
+				aria-expanded="true"
+				aria-label="Minimizar reproductor de Spotify"
+			>
+				<span class="collapse-icon">
+					<IconMinus size={16} strokeWidth={2} />
+				</span>
+				<span class="expand-icon">
+					<IconChevronRight size={14} strokeWidth={2.2} />
+				</span>
+			</button>
+		</div>
+	</div>
+
+	<button
+		class="scroll-top"
+		type="button"
+		data-scroll-top
+		aria-label="Volver al inicio de la página"
+		aria-hidden="true"
+		tabindex="-1"
+	>
+		<span class="scroll-top-surface">
+			<IconArrowUp size={20} strokeWidth={2} />
+		</span>
+		<span class="scroll-top-label" aria-hidden="true">Volver arriba</span>
+	</button>
+</aside>
+
+<script>
+	const initFloatingControls = () => {
+		const controls = document.querySelector<HTMLElement>(
+			"[data-floating-controls]",
+		)
+		const scrollTop = controls?.querySelector<HTMLButtonElement>(
+			"[data-scroll-top]",
+		)
+		const spotifyContainer =
+			controls?.querySelector<HTMLElement>(".spotifyContainer")
+		const spotifyShell = controls?.querySelector<HTMLElement>(
+			"[data-spotify-shell]",
+		)
+		const spotifyToggle = controls?.querySelector<HTMLButtonElement>(
+			"[data-spotify-toggle]",
+		)
+
+		if (!controls || !scrollTop) return
+		if (controls.dataset.initialized === "true") return
+		controls.dataset.initialized = "true"
+
+		let frame = 0
+		const minimizedStorageKey = "portfolio:spotify-dock-minimized"
+
+		const setSpotifyMinimized = (
+			isMinimized: boolean,
+			persist = true,
+		) => {
+			spotifyContainer?.classList.toggle("is-minimized", isMinimized)
+			spotifyShell?.classList.toggle("is-minimized", isMinimized)
+
+			if (spotifyToggle) {
+				spotifyToggle.setAttribute("aria-expanded", String(!isMinimized))
+				spotifyToggle.setAttribute(
+					"aria-label",
+					isMinimized
+						? "Expandir reproductor de Spotify"
+						: "Minimizar reproductor de Spotify",
+				)
+				spotifyToggle.title = isMinimized
+					? "Expandir reproductor"
+					: "Minimizar reproductor"
+			}
+
+			if (persist) {
+				try {
+					localStorage.setItem(
+						minimizedStorageKey,
+						isMinimized ? "true" : "false",
+					)
+				} catch {
+					// El widget sigue funcionando aunque el almacenamiento esté bloqueado.
+				}
+			}
+		}
+
+		if (spotifyShell && spotifyToggle) {
+			let savedMinimized = false
+
+			try {
+				savedMinimized =
+					localStorage.getItem(minimizedStorageKey) === "true"
+			} catch {
+				savedMinimized = false
+			}
+
+			setSpotifyMinimized(savedMinimized, false)
+			spotifyToggle.addEventListener("click", () => {
+				setSpotifyMinimized(!spotifyShell.classList.contains("is-minimized"))
+			})
+		}
+
+		const update = () => {
+			frame = 0
+			const scrollable = Math.max(
+				document.documentElement.scrollHeight - window.innerHeight,
+				1,
+			)
+			const progress = Math.min(Math.max(window.scrollY / scrollable, 0), 1)
+			const isVisible = window.scrollY > Math.min(window.innerHeight * 0.7, 640)
+
+			scrollTop.style.setProperty("--scroll-progress", String(progress))
+			scrollTop.classList.toggle("is-visible", isVisible)
+			scrollTop.setAttribute("aria-hidden", String(!isVisible))
+			scrollTop.tabIndex = isVisible ? 0 : -1
+		}
+
+		const scheduleUpdate = () => {
+			if (frame) return
+			frame = window.requestAnimationFrame(update)
+		}
+
+		const goToTop = () => {
+			const reduceMotion = window.matchMedia(
+				"(prefers-reduced-motion: reduce)",
+			).matches
+
+			window.scrollTo({
+				top: 0,
+				behavior: reduceMotion ? "auto" : "smooth",
+			})
+		}
+
+		scrollTop.addEventListener("click", goToTop)
+		window.addEventListener("scroll", scheduleUpdate, { passive: true })
+		window.addEventListener("resize", scheduleUpdate, { passive: true })
+		update()
+
+		document.addEventListener(
+			"astro:before-swap",
+			() => {
+				window.cancelAnimationFrame(frame)
+				window.removeEventListener("scroll", scheduleUpdate)
+				window.removeEventListener("resize", scheduleUpdate)
+			},
+			{ once: true },
+		)
+	}
+
+	document.addEventListener("astro:page-load", initFloatingControls)
+	initFloatingControls()
+</script>
+
+<style>
+	.floating-controls {
+		position: fixed;
+		inset: 0;
+		z-index: 20;
+		pointer-events: none;
+	}
+
+	.spotifyContainer {
+		position: absolute;
+		left: max(1.25rem, env(safe-area-inset-left));
+		bottom: max(1.25rem, env(safe-area-inset-bottom));
+		width: min(18rem, calc(100vw - 6rem));
+		pointer-events: auto;
+		animation: materialize 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	.spotifyContainer.is-minimized {
+		width: 3.25rem;
+	}
+
+	.spotifyContainer[hidden] {
+		display: none;
+	}
+
+	.spotify-shell {
+		position: relative;
+	}
+
+	.spotify-shell:not(.is-minimized) :global(.now-playing) {
+		padding-right: 2.85rem;
+	}
+
+	.spotify-shell.is-minimized {
+		animation: compact-player 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	.spotify-shell.is-minimized :global(.now-playing) {
+		grid-template-columns: 1fr;
+		padding: 0;
+	}
+
+	.spotify-shell.is-minimized :global(.cover) {
+		width: 100%;
+	}
+
+	.spotify-shell.is-minimized :global(.song),
+	.spotify-shell.is-minimized :global(.open-icon) {
+		display: none;
+	}
+
+	.spotify-toggle {
+		position: absolute;
+		z-index: 2;
+		top: 50%;
+		right: 0.45rem;
+		display: grid;
+		width: 2.15rem;
+		height: 2.15rem;
+		place-items: center;
+		border: 0;
+		border-radius: 8px;
+		background: color-mix(in srgb, var(--constras-color) 80%, transparent);
+		color: var(--title-color);
+		cursor: pointer;
+		transform: translateY(-50%);
+		transition:
+			background-color 0.2s ease,
+			color 0.2s ease,
+			transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	.spotify-toggle::before {
+		position: absolute;
+		inset: -0.3rem;
+		content: "";
+	}
+
+	.spotify-toggle:hover {
+		background: var(--first-color);
+		color: #fff;
+	}
+
+	.spotify-toggle:active {
+		transform: translateY(-50%) scale(0.92);
+	}
+
+	.expand-icon {
+		display: none;
+	}
+
+	.spotify-shell.is-minimized .spotify-toggle {
+		top: -0.3rem;
+		right: -0.3rem;
+		bottom: auto;
+		width: 1.5rem;
+		height: 1.5rem;
+		border-radius: 7px;
+		background: var(--container-color);
+		color: var(--title-color);
+		transform: none;
+		box-shadow: 0 2px 6px rgba(23, 16, 12, 0.22);
+	}
+
+	.spotify-shell.is-minimized .spotify-toggle::before {
+		inset: -0.625rem;
+	}
+
+	.spotify-shell.is-minimized .spotify-toggle:active {
+		transform: scale(0.92);
+	}
+
+	.spotify-shell.is-minimized .collapse-icon {
+		display: none;
+	}
+
+	.spotify-shell.is-minimized .expand-icon {
+		display: grid;
+	}
+
+	.scroll-top {
+		--scroll-progress: 0;
+		position: absolute;
+		right: max(1.25rem, env(safe-area-inset-right));
+		bottom: max(1.25rem, env(safe-area-inset-bottom));
+		display: grid;
+		width: 3.25rem;
+		height: 3.25rem;
+		flex: 0 0 3.25rem;
+		place-items: center;
+		border: 0;
+		border-radius: 50%;
+		background: conic-gradient(
+			var(--first-color) calc(var(--scroll-progress) * 1turn),
+			color-mix(in srgb, var(--border-color) 65%, transparent) 0
+		);
+		color: var(--title-color);
+		opacity: 0;
+		visibility: hidden;
+		cursor: pointer;
+		pointer-events: none;
+		transform: translateY(0.75rem) scale(0.9);
+		transition:
+			opacity 0.22s ease,
+			transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+			visibility 0.22s ease;
+	}
+
+	.scroll-top.is-visible {
+		opacity: 1;
+		visibility: visible;
+		pointer-events: auto;
+		transform: translateY(0) scale(1);
+	}
+
+	.scroll-top-surface {
+		position: relative;
+		z-index: 1;
+		display: grid;
+		width: calc(100% - 4px);
+		height: calc(100% - 4px);
+		place-items: center;
+		border-radius: inherit;
+		background: color-mix(in srgb, var(--container-color) 92%, transparent);
+		backdrop-filter: blur(18px) saturate(145%);
+		box-shadow: 0 4px 12px rgba(23, 16, 12, 0.16);
+		transition:
+			background-color 0.2s ease,
+			color 0.2s ease;
+	}
+
+	.scroll-top:hover .scroll-top-surface {
+		background: var(--first-color);
+		color: #fff;
+	}
+
+	.scroll-top:active {
+		transform: scale(0.94);
+	}
+
+	.scroll-top-label {
+		position: absolute;
+		right: 0;
+		bottom: calc(100% + 0.6rem);
+		padding: 0.4rem 0.6rem;
+		border-radius: 6px;
+		background: var(--title-color);
+		color: var(--body-color);
+		font-size: 0.68rem;
+		font-weight: 600;
+		white-space: nowrap;
+		opacity: 0;
+		pointer-events: none;
+		transform: translateY(0.35rem);
+		transition:
+			opacity 0.18s ease,
+			transform 0.18s ease;
+	}
+
+	.scroll-top:hover .scroll-top-label,
+	.scroll-top:focus-visible .scroll-top-label {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	@keyframes materialize {
+		from {
+			opacity: 0;
+			transform: translateY(0.75rem) scale(0.97);
+		}
+	}
+
+	@keyframes compact-player {
+		from {
+			opacity: 0.65;
+			transform: scale(0.92);
+		}
+	}
+
+	@media screen and (max-width: 640px) {
+		.spotifyContainer {
+			left: max(0.75rem, env(safe-area-inset-left));
+			bottom: max(0.75rem, env(safe-area-inset-bottom));
+			width: min(16rem, calc(100vw - 5.4rem));
+		}
+
+		.spotifyContainer.is-minimized {
+			width: 3rem;
+		}
+
+		.scroll-top {
+			right: max(0.75rem, env(safe-area-inset-right));
+			bottom: max(0.75rem, env(safe-area-inset-bottom));
+			width: 3rem;
+			height: 3rem;
+			flex-basis: 3rem;
+		}
+
+		.scroll-top-label {
+			display: none;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.spotifyContainer {
+			animation: none;
+		}
+
+		.spotify-shell.is-minimized {
+			animation: none;
+		}
+
+		.scroll-top {
+			transform: none;
+			transition: opacity 0.15s ease;
+		}
+
+		.scroll-top:active {
+			transform: none;
+		}
+	}
+
+	@media (prefers-reduced-transparency: reduce) {
+		.scroll-top-surface {
+			background: var(--container-color);
+			backdrop-filter: none;
+		}
+	}
+
+	@media (prefers-contrast: more) {
+		.scroll-top-surface {
+			background: var(--container-color);
+			outline: 2px solid var(--title-color);
+		}
+	}
+</style>

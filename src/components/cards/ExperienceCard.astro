@@ -26,19 +26,21 @@ const formattedEndDate = endDate
 ---
 
 <article class="experience-card">
-	<header class="card-header">
-		<div class="title-company">
-			<h2>{title}</h2>
-			<p>{company}</p>
-		</div>
+	<div class="role-meta">
 		<span class="duration">
 			{convertFirstLetterToUppercase(formatedStartDate)} -
 			{convertFirstLetterToUppercase(formattedEndDate)}
 		</span>
-	</header>
-	<div class="card-content">
+		<p>{company}</p>
+	</div>
+
+	<div class="role-content">
+		<header>
+			<h3>{title}</h3>
+		</header>
+
 		<div class="responsibilities">
-			<h3>Responsabilidades clave:</h3>
+			<h4>En el día a día</h4>
 			<ul>
 				{responsibilities.map((responsibility) => <li>{responsibility}</li>)}
 			</ul>
@@ -46,13 +48,13 @@ const formattedEndDate = endDate
 		{
 			achievement && (
 				<div class="achievement">
-					<h3>Logro:</h3>
+					<h4>Resultado destacado</h4>
 					<p>{achievement}</p>
 				</div>
 			)
 		}
 		<footer class="technologies">
-			<h3>Lenguajes y tecnologías:</h3>
+			<h4>Tecnologías</h4>
 			<ul>
 				{
 					technologies.map((tech) => (
@@ -68,100 +70,106 @@ const formattedEndDate = endDate
 
 <style>
 	.experience-card {
-		background-color: var(--container-color);
-		border-radius: 8px;
-		box-shadow: var(--box-shadow);
+		display: grid;
+		grid-template-columns: minmax(11rem, 0.42fr) minmax(0, 1.58fr);
+		gap: clamp(2rem, 6vw, 6rem);
 		width: 100%;
-		transition: box-shadow 0.3s ease;
-		height: fit-content;
+		padding: clamp(2rem, 5vw, 4.5rem) 0;
+		border-top: 1px solid var(--border-color);
 	}
 
-	.experience-card:hover {
-		box-shadow: var(--box-shadow-hover);
-	}
-
-	.card-header {
-		padding: 1.5rem;
+	.experience-card:last-child {
 		border-bottom: 1px solid var(--border-color);
-		display: flex;
-		justify-content: space-between;
-		align-items: flex-start;
-		flex-wrap: wrap;
-		gap: var(--gap-2);
 	}
 
-	.title-company h2 {
-		font-size: 1.25rem;
-		font-weight: bold;
-		margin: 0;
+	.experience-card:first-child {
+		border-top: 0;
+	}
+
+	.role-meta {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.role-meta p {
+		color: var(--title-color);
+		font-weight: 600;
+	}
+
+	.role-content > header {
+		margin-bottom: 2rem;
+	}
+
+	.role-content > header h3 {
+		font-size: clamp(1.75rem, 3vw, 2.5rem);
 		color: var(--first-color);
 	}
 
-	.title-company p {
-		font-size: 1rem;
-		color: var(--text-color);
-		margin: 0.25rem 0 0;
-	}
-
 	.duration {
-		background-color: var(--constras-color);
-		padding: 0.25rem 0.5rem;
-		border-radius: 4px;
-		color: var(--text-color);
+		color: var(--text-color-light);
+		font-family: "Cascadia Code", monospace;
+		font-size: 0.75rem;
+		line-height: 1.5;
 	}
 
-	.card-content {
-		padding: 1.5rem;
+	h4 {
+		margin-bottom: 0.85rem;
+		font-size: 0.9rem;
+		letter-spacing: 0;
 	}
 
-	.responsibilities,
-	.technologies {
-		margin-bottom: 1.5rem;
+	.responsibilities {
+		margin-bottom: 2rem;
 	}
 
-	.responsibilities h3,
-	.technologies h3,
-	.achievement h3 {
-		font-size: 1rem;
-		font-weight: 600;
-		margin-bottom: 0.5rem;
-		color: var(--text-color);
+	.responsibilities ul {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 0.75rem 2rem;
 	}
 
-	.responsibilities ul,
-	.technologies ul {
-		list-style-type: disc;
-		padding-left: 1.5rem;
-		margin: 0;
+	.responsibilities li {
+		position: relative;
+		padding-left: 1.15rem;
 	}
 
-	.responsibilities li,
-	.technologies li,
-	.achievement p {
-		color: var(--text-color);
-		margin-bottom: 0.25rem;
+	.responsibilities li::before {
+		content: "";
+		position: absolute;
+		top: 0.72em;
+		left: 0;
+		width: 0.35rem;
+		height: 0.35rem;
+		border-radius: 50%;
+		background: var(--first-color);
 	}
 
 	.technologies ul {
 		display: flex;
 		flex-wrap: wrap;
-		gap: var(--gap-1);
-		list-style-type: none;
-		padding-left: 0;
+		gap: 0.5rem;
 	}
 
 	.achievement {
-		margin-bottom: 1.5rem;
+		margin-bottom: 2rem;
+		padding: clamp(1.25rem, 3vw, 1.75rem);
+		background: var(--constras-color);
+		border-radius: 10px;
 	}
 
-	@media (max-width: 480px) {
-		.card-header {
-			flex-direction: column;
-			align-items: flex-start;
+	.achievement p {
+		max-width: 72ch;
+	}
+
+	@media (max-width: 720px) {
+		.experience-card {
+			grid-template-columns: 1fr;
+			gap: 1.5rem;
 		}
 
-		.duration {
-			align-self: flex-start;
+		.responsibilities ul {
+			grid-template-columns: 1fr;
 		}
 	}
 </style>

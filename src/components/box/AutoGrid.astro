@@ -31,17 +31,16 @@ const {
 
 <style>
 	.auto-grid {
-		display: flex;
-		flex-direction: column;
+		display: grid;
+		grid-template-columns: 1fr;
 		width: 100%;
 		max-width: 100%;
 		gap: var(--grid-gap);
-		justify-content: center;
+		justify-content: var(--justify);
 	}
 
 	@media (min-width: 998px) {
 		.auto-grid {
-			display: grid;
 			grid-template-columns: repeat(
 				auto-fit,
 				minmax(
