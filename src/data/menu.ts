@@ -8,7 +8,6 @@ import {
 	IconFileText,
 	IconSchool,
 	IconHome,
-	IconArticle,
 } from "@tabler/icons-react"
 
 export const MENU: IMenuItem[] = [

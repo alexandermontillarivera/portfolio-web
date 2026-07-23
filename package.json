@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "check": "astro check",
     "build:preview": "npx astro build ./ --node",
     "preview": "npx astro preview --node",
     "spotify:auth": "node scripts/spotify-auth.mjs",
@@ -23,14 +24,18 @@
     "@vercel/speed-insights": "^1.2.0",
     "astro": "^5.13.9",
     "dayjs": "1.11.18",
+    "dompurify": "3.4.12",
     "highlight.js": "^11.11.1",
+    "marked": "18.0.7",
     "node-html-parser": "^7.0.1",
     "react": "19.1.1",
     "react-dom": "19.1.1",
     "shikiji": "^0.10.2"
   },
   "devDependencies": {
+    "@astrojs/check": "0.9.9",
     "@types/highlight.js": "^10.1.0",
-    "@types/node": "24.5.2"
+    "@types/node": "24.5.2",
+    "typescript": "5.9.3"
   }
 }
