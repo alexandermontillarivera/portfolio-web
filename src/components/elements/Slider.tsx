@@ -1,139 +1,146 @@
-import styles from '@/css/slider/Slider.module.css'
-import { SLIDE_TIMEOUT, SLIDE_TRANSITION_DURATION } from '@/constants'
-import { useState, useEffect, useCallback } from 'react'
-import { ISliderItem } from '@/interfaces/Slider'
+import styles from "@/css/slider/Slider.module.css"
+import { SLIDE_TIMEOUT } from "@/constants"
+import { useCallback, useEffect, useRef, useState } from "react"
+import { ISliderItem } from "@/interfaces/Slider"
 import {
-  IconArrowLeft,
-  IconArrowRight,
-  IconPlayerPause,
-  IconPlayerPlay
-} from '@tabler/icons-react'
+	IconArrowLeft,
+	IconArrowRight,
+	IconPlayerPause,
+	IconPlayerPlay,
+} from "@tabler/icons-react"
 
 interface Props {
-  data: ISliderItem[]
+	data: ISliderItem[]
 }
 
 export function Slider({ data }: Props) {
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [isPlaying, setIsPlaying] = useState(true)
-  const [isAnimating, setIsAnimating] = useState(false)
+	const [currentIndex, setCurrentIndex] = useState(0)
+	const [isPlaying, setIsPlaying] = useState(true)
+	const [isInteracting, setIsInteracting] = useState(false)
+	const pointerStart = useRef<number | null>(null)
 
-  const changeSlide = useCallback((newIndex: number) => {
-    if (isAnimating) return
+	const nextPerson = useCallback(() => {
+		setCurrentIndex((current) => (current + 1) % data.length)
+	}, [data.length])
 
-    setIsAnimating(true)
+	const prevPerson = useCallback(() => {
+		setCurrentIndex((current) => (current - 1 + data.length) % data.length)
+	}, [data.length])
 
-    setTimeout(() => {
-      setCurrentIndex(newIndex)
-    }, SLIDE_TRANSITION_DURATION)
+	useEffect(() => {
+		if (!isPlaying || isInteracting) return
+		const intervalId = window.setInterval(nextPerson, SLIDE_TIMEOUT)
+		return () => window.clearInterval(intervalId)
+	}, [isPlaying, isInteracting, nextPerson])
 
-    setTimeout(() => {
-      setIsAnimating(false)
-    }, SLIDE_TRANSITION_DURATION)
-  }, [isAnimating])
+	const handlePointerDown = (event: React.PointerEvent) => {
+		pointerStart.current = event.clientX
+	}
 
-  const nextPerson = useCallback(() => {
-    const newIndex = (currentIndex + 1) % data.length
-    changeSlide(newIndex)
-  }, [currentIndex, data.length, changeSlide])
+	const handlePointerUp = (event: React.PointerEvent) => {
+		if (pointerStart.current === null) return
+		const distance = event.clientX - pointerStart.current
+		pointerStart.current = null
 
-  const prevPerson = useCallback(() => {
-    const newIndex = (currentIndex - 1 + data.length) % data.length
-    changeSlide(newIndex)
-  }, [currentIndex, data.length, changeSlide])
+		if (Math.abs(distance) < 45) return
+		distance > 0 ? prevPerson() : nextPerson()
+	}
 
-  const goToSlide = (index: number) => {
-    changeSlide(index)
-  }
+	const person = data[currentIndex]
 
-  const togglePlayPause = () => {
-    setIsPlaying(!isPlaying)
-  }
+	return (
+		<article
+			className={styles.sliderContainer}
+			onMouseEnter={() => setIsInteracting(true)}
+			onMouseLeave={() => setIsInteracting(false)}
+			onFocus={() => setIsInteracting(true)}
+			onBlur={() => setIsInteracting(false)}
+		>
+			<div
+				className={styles.slider}
+				onPointerDown={handlePointerDown}
+				onPointerUp={handlePointerUp}
+			>
+				<div
+					key={person.id}
+					className={styles.slideContent}
+					aria-live="polite"
+				>
+					<div className={styles.portrait}>
+						<img
+							src={person.image}
+							alt={person.name}
+							className={styles.image}
+						/>
+						<span>{String(currentIndex + 1).padStart(2, "0")}</span>
+					</div>
 
-  useEffect(() => {
-    let intervalId: NodeJS.Timeout
+					<div className={styles.info}>
+						<div className={styles.personHeading}>
+							<span className={styles.context}>Personas que admiro</span>
+							<h3>{person.name}</h3>
+						</div>
+						<div className={styles.comment}>
+							{Array.isArray(person.comment) ? (
+								person.comment.map((paragraph, index) => (
+									<p key={index}>{paragraph}</p>
+								))
+							) : (
+								<p>{person.comment}</p>
+							)}
+						</div>
+					</div>
+				</div>
+			</div>
 
-    if (isPlaying && !isAnimating) {
-      intervalId = setInterval(nextPerson, SLIDE_TIMEOUT)
-    }
+			<footer className={styles.toolbar}>
+				<div className={styles.navigation}>
+					<button
+						onClick={prevPerson}
+						className={styles.navButton}
+						aria-label="Ver persona anterior"
+					>
+						<IconArrowLeft />
+					</button>
+					<button
+						onClick={nextPerson}
+						className={styles.navButton}
+						aria-label="Ver siguiente persona"
+					>
+						<IconArrowRight />
+					</button>
+				</div>
 
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId)
-      }
-    }
-  }, [isPlaying, nextPerson, isAnimating])
+				<div className={styles.indicators} aria-label="Seleccionar persona">
+					{data.map((item, index) => (
+						<button
+							key={item.id}
+							className={`${styles.indicator} ${
+								index === currentIndex ? styles.active : ""
+							}`}
+							onClick={() => setCurrentIndex(index)}
+							aria-label={`Ver a ${item.name}`}
+							aria-current={index === currentIndex ? "true" : undefined}
+						/>
+					))}
+				</div>
 
-  return (
-    <article className={styles.sliderContainer}>
-      <div className={styles.slider}>
-        {data.map((person, index) => (
-          <div
-            key={person.id}
-            className={`${styles.slideContent} ${index === currentIndex ? styles.active : ''
-              } ${isAnimating && index === currentIndex ? styles.exit : ''}`}
-          >
-            <img
-              src={person.image || "/person-placeholder.jpg"}
-              alt={person.name}
-              className={styles.image}
-              loading="lazy"
-              width={200}
-              height={200}
-            />
-            <div className={styles.info}>
-              <h3>{person.name}</h3>
-              {Array.isArray(person.comment) ? (
-                person.comment.map((paragraph, index) => (
-                  <p key={index}>{paragraph}</p>
-                ))
-              ) : (
-                <p>{person.comment}</p>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <menu className={styles.navigation}>
-        <button
-          onClick={prevPerson}
-          className={styles.navButton}
-          disabled={isAnimating}
-        >
-          <IconArrowLeft />
-        </button>
-
-        <button
-          onClick={togglePlayPause}
-          className={styles.navButton}
-          disabled={isAnimating}
-        >
-          {isPlaying ? <IconPlayerPause size={18} /> : <IconPlayerPlay size={18} />}
-        </button>
-
-        <div className={styles.indicators}>
-          {data.map((_, index) => (
-            <span
-              key={index}
-              className={`${styles.indicator} ${index === currentIndex ? styles.active : ''}`}
-              onClick={() => !isAnimating && index !== currentIndex && goToSlide(index)}
-            />
-          ))}
-        </div>
-
-        <button
-          onClick={nextPerson}
-          className={styles.navButton}
-          disabled={isAnimating}
-        >
-          <IconArrowRight />
-        </button>
-      </menu>
-
-      <footer className={styles.counter}>
-        {currentIndex + 1} / {data.length}
-      </footer>
-    </article>
-  )
+				<button
+					onClick={() => setIsPlaying((playing) => !playing)}
+					className={styles.playButton}
+					aria-label={
+						isPlaying
+							? "Pausar carrusel automático"
+							: "Reanudar carrusel automático"
+					}
+				>
+					{isPlaying ? (
+						<IconPlayerPause size={17} />
+					) : (
+						<IconPlayerPlay size={17} />
+					)}
+				</button>
+			</footer>
+		</article>
+	)
 }

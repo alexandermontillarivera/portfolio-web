@@ -98,7 +98,7 @@ export const TECH_SKILLS: ITechSkill[] = [
 		icon: IconBrandGithub,
 		name: "GitHub",
 		type: TECH_SKILL_TYPE.TOOL,
-		web: "https://github,com",
+		web: "https://github.com/",
 	},
 	{
 		icon: IconGitFork,

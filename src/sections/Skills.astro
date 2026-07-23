@@ -1,84 +1,345 @@
 ---
 import Titles from "@/components/text/Titles.astro"
-import Tooltip from "@/components/elements/Tooltip.astro"
 import TechSkillCard from "@/components/cards/TechSkillCard.astro"
 import { TECH_SKILL_TYPE } from "@/interfaces/TechSkill"
 import { TECH_SKILLS, TITLES_SKILL } from "@/data/skills"
 import { SECTIONS } from "@/constants"
+import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react"
 
 const list = Object.values(TECH_SKILL_TYPE)
-const sortedItemsRandomly = TECH_SKILLS.sort(() => Math.random() - 0.5)
+const sortedItems = [...TECH_SKILLS].sort((a, b) =>
+	a.name.localeCompare(b.name, "es"),
+)
 ---
 
 <section id={SECTIONS.SKILLS}>
-	<Titles title="Habilidades" subtitle="Mis habilidades" />
+	<Titles
+		title="Herramientas de trabajo"
+		subtitle="Un stack seleccionado para diseñar, construir, probar y llevar productos digitales a producción."
+	/>
 
-	<menu>
-		{
-			list.map((item) => (
-				<Tooltip text={TITLES_SKILL[item]} align="center">
-					<button
-						data-filter={item}
-						class:list={[{ active: item === TECH_SKILL_TYPE.ALL }]}
-					>
-						{item}
-					</button>
-				</Tooltip>
-			))
-		}
-	</menu>
+	<div class="skills-directory">
+		<header class="directory-header">
+			<div class="directory-meta">
+				<span>Stack actual</span>
+				<p>
+					<strong data-visible-count>{TECH_SKILLS.length}</strong>
+					<span data-visible-label>tecnologías en uso</span>
+				</p>
+			</div>
 
-	<div class="skills-container">
-		{sortedItemsRandomly.map((item) => <TechSkillCard data={item} />)}
+			<div class="filter-scroller" data-filter-scroller>
+				<button
+					class="filter-scroll-button filter-prev"
+					type="button"
+					aria-label="Ver filtros anteriores"
+					data-filter-prev
+				>
+					<IconChevronLeft size={18} strokeWidth={2} />
+				</button>
+				<menu aria-label="Filtrar tecnologías" data-filter-menu>
+					{
+						list.map((item) => (
+						<button
+							data-filter={item}
+							class:list={[{ active: item === TECH_SKILL_TYPE.ALL }]}
+							aria-pressed={item === TECH_SKILL_TYPE.ALL ? "true" : "false"}
+							title={TITLES_SKILL[item]}
+						>
+							{item}
+						</button>
+						))
+					}
+				</menu>
+				<button
+					class="filter-scroll-button filter-next"
+					type="button"
+					aria-label="Ver más filtros"
+					data-filter-next
+				>
+					<IconChevronRight size={18} strokeWidth={2} />
+				</button>
+			</div>
+		</header>
+
+		<div class="skills-container">
+			{sortedItems.map((item, index) => (
+				<TechSkillCard data={item} index={index + 1} />
+			))}
+		</div>
 	</div>
 </section>
 
 <style>
-	.skills-container {
+	.skills-directory {
+		--skills-outline: color-mix(
+			in srgb,
+			var(--border-color) 58%,
+			transparent
+		);
+		--skills-divider: color-mix(
+			in srgb,
+			var(--border-color) 34%,
+			transparent
+		);
+		overflow: hidden;
+		border: 1px solid var(--skills-outline);
+		border-radius: 16px;
+		background: color-mix(in srgb, var(--container-color) 82%, var(--body-color));
+	}
+
+	.directory-header {
+		display: grid;
+		grid-template-columns: minmax(11rem, 0.7fr) minmax(0, 2fr);
+		align-items: end;
+		gap: 2rem;
+		padding: clamp(1.25rem, 3vw, 2rem);
+		border-bottom: 1px solid var(--skills-outline);
+	}
+
+	.directory-meta > span {
+		color: var(--first-color);
+		font-family: "Cascadia Code", monospace;
+		font-size: 0.7rem;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+	}
+
+	.directory-meta p {
 		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-		margin: 0 auto;
-		gap: 24px;
+		align-items: baseline;
+		gap: 0.5rem;
+		margin-top: 0.45rem;
+		color: var(--text-color-light);
+		font-size: 0.78rem;
+	}
+
+	.directory-meta strong {
+		color: var(--title-color);
+		font-size: clamp(1.5rem, 3vw, 2.25rem);
+		font-weight: 600;
+		letter-spacing: -0.05em;
+		line-height: 1;
+	}
+
+	.skills-container {
+		display: grid;
+		grid-template-columns: repeat(5, minmax(0, 1fr));
+	}
+
+	.skills-container :global(a) {
+		border-right: 1px solid var(--skills-divider);
+		border-bottom: 1px solid var(--skills-divider);
 	}
 
 	menu {
 		display: flex;
-		justify-content: center;
-		gap: 8px;
 		flex-wrap: wrap;
-		margin-bottom: 40px;
+		justify-content: flex-end;
+		gap: 0.45rem;
+	}
+
+	.filter-scroller {
+		position: relative;
+		min-width: 0;
+	}
+
+	.filter-scroll-button {
+		display: none;
 	}
 
 	button {
-		background-color: var(--constras-color);
+		border: 1px solid transparent;
+		border-radius: 999px;
+		background: transparent;
 		color: var(--text-color);
-		border: none;
-		padding: 8px 16px;
-		border-radius: 8px;
-		font-weight: 600;
+		padding: 0.52rem 0.8rem;
+		font-family: inherit;
+		font-size: 0.72rem;
+		font-weight: 500;
+		line-height: 1;
+		white-space: nowrap;
 		cursor: pointer;
-		transition: background-color 0.3s ease;
+		transition:
+			background-color 0.2s ease,
+			border-color 0.2s ease,
+			color 0.2s ease,
+			transform 0.2s ease;
+	}
+
+	button:hover {
+		color: var(--title-color);
+		border-color: var(--border-color);
+		background: var(--body-color);
+	}
+
+	button:active {
+		transform: scale(0.97);
 	}
 
 	button.active {
-		background-color: var(--first-color);
+		border-color: var(--first-color);
+		background: var(--first-color);
 		color: #fff;
 	}
 
-	@media screen and (max-width: 400px) {
+	@media screen and (max-width: 960px) {
+		.directory-header {
+			grid-template-columns: 1fr;
+			align-items: start;
+			gap: 1.25rem;
+		}
+
+		menu {
+			justify-content: flex-start;
+		}
+
 		.skills-container {
-			justify-content: center;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
 	}
 
 	:global([data-type]) {
-		transition: all 0.5s ease;
+		transition:
+			background-color 0.2s ease,
+			color 0.2s ease,
+			transform 0.2s ease;
 	}
 
-	:global([data-type].dim) {
-		opacity: 0.3;
-		transform: scale(0.95);
+	:global([data-type][hidden]) {
+		display: none;
+	}
+
+	@media screen and (max-width: 560px) {
+		.directory-header {
+			padding-inline: 1rem;
+		}
+
+		.filter-scroller {
+			width: calc(100% + 1rem);
+			margin-right: -1rem;
+		}
+
+		.filter-scroller::before,
+		.filter-scroller::after {
+			position: absolute;
+			z-index: 1;
+			top: 0;
+			width: 4.5rem;
+			height: 100%;
+			content: "";
+			pointer-events: none;
+			transition: opacity 0.2s ease;
+		}
+
+		.filter-scroller::before {
+			left: 0;
+			opacity: 0;
+			background: linear-gradient(
+				90deg,
+				color-mix(
+						in srgb,
+						var(--container-color) 82%,
+						var(--body-color)
+					)
+					42%,
+				transparent
+			);
+		}
+
+		.filter-scroller::after {
+			right: 0;
+			background: linear-gradient(
+				90deg,
+				transparent,
+				color-mix(
+						in srgb,
+						var(--container-color) 82%,
+						var(--body-color)
+					)
+					58%
+			);
+		}
+
+		.filter-scroller.has-scroll::before {
+			opacity: 1;
+		}
+
+		.filter-scroller.at-end::after {
+			opacity: 0;
+		}
+
+		menu {
+			flex-wrap: nowrap;
+			justify-content: flex-start;
+			width: 100%;
+			padding-right: 4.75rem;
+			overflow-x: auto;
+			overscroll-behavior-inline: contain;
+			scroll-behavior: smooth;
+			scroll-snap-type: x proximity;
+			scrollbar-width: none;
+		}
+
+		menu::-webkit-scrollbar {
+			display: none;
+		}
+
+		menu button {
+			flex: 0 0 auto;
+			scroll-snap-align: start;
+		}
+
+		.filter-scroll-button {
+			position: absolute;
+			z-index: 2;
+			top: 50%;
+			display: grid;
+			width: 2.25rem;
+			height: 2.25rem;
+			place-items: center;
+			border-color: var(--skills-outline);
+			background: var(--container-color);
+			color: var(--title-color);
+			padding: 0;
+			box-shadow: 0 0.35rem 1rem rgba(17, 14, 12, 0.12);
+			transform: translateY(-50%);
+			transition:
+				opacity 0.2s ease,
+				transform 0.2s ease,
+				visibility 0.2s ease;
+		}
+
+		.filter-scroll-button:active {
+			transform: translateY(-50%) scale(0.94);
+		}
+
+		.filter-prev {
+			left: 0.75rem;
+			opacity: 0;
+			visibility: hidden;
+			transform: translate(-0.35rem, -50%);
+		}
+
+		.filter-scroller.has-scroll .filter-prev {
+			opacity: 1;
+			visibility: visible;
+			transform: translate(0, -50%);
+		}
+
+		.filter-next {
+			right: 0.75rem;
+		}
+
+		.filter-scroller.at-end .filter-next {
+			opacity: 0;
+			visibility: hidden;
+			transform: translate(0.35rem, -50%);
+		}
+
+		.skills-container {
+			grid-template-columns: 1fr;
+		}
 	}
 </style>
 
@@ -98,35 +359,73 @@ const sortedItemsRandomly = TECH_SKILLS.sort(() => Math.random() - 0.5)
 	const initFilter = () => {
 		const buttons = document.querySelectorAll("button[data-filter]")
 		const items = document.querySelectorAll("[data-type]")
+		const count = document.querySelector("[data-visible-count]")
+		const label = document.querySelector("[data-visible-label]")
 
 		buttons.forEach((button) => {
+			if (button.getAttribute("data-filter-bound") === "true") return
+			button.setAttribute("data-filter-bound", "true")
+
 			button.addEventListener("click", () => {
-				buttons.forEach((btn) => btn.classList.remove("active"))
+				buttons.forEach((btn) => {
+					btn.classList.remove("active")
+					btn.setAttribute("aria-pressed", "false")
+				})
 				button.classList.add("active")
+				button.setAttribute("aria-pressed", "true")
 
 				const filterValue = button.getAttribute("data-filter")
+				let visibleItems = 0
 
 				items.forEach((item) => {
 					const itemType = item.getAttribute("data-type")
+					const isVisible =
+						filterValue === TECH_SKILL_TYPE.ALL || filterValue === itemType
 
-					if (filterValue === TECH_SKILL_TYPE.ALL) {
-						item.classList.remove("dim")
-						return
-					}
-
-					if (filterValue !== TECH_SKILL_TYPE.ALL && filterValue !== itemType) {
-						item.classList.add("dim")
-						return
-					}
-
-					if (filterValue === itemType) {
-						item.classList.remove("dim")
-					}
+					item.toggleAttribute("hidden", !isVisible)
+					if (isVisible) visibleItems += 1
 				})
+
+				if (count) count.textContent = String(visibleItems).padStart(2, "0")
+				if (label) {
+					label.textContent =
+						visibleItems === 1 ? "tecnología en uso" : "tecnologías en uso"
+				}
 			})
 		})
 	}
 
-	document.addEventListener("astro:page-load", initFilter)
+	const initFilterScroll = () => {
+		const scroller = document.querySelector("[data-filter-scroller]")
+		const menu = document.querySelector("[data-filter-menu]")
+		const previous = document.querySelector("[data-filter-prev]")
+		const next = document.querySelector("[data-filter-next]")
+
+		if (!scroller || !menu || !previous || !next) return
+		if (scroller.getAttribute("data-scroll-bound") === "true") return
+		scroller.setAttribute("data-scroll-bound", "true")
+
+		const updateScrollState = () => {
+			const remaining = menu.scrollWidth - menu.clientWidth - menu.scrollLeft
+			scroller.classList.toggle("has-scroll", menu.scrollLeft > 4)
+			scroller.classList.toggle("at-end", remaining <= 4)
+		}
+
+		previous.addEventListener("click", () => {
+			menu.scrollBy({ left: -Math.max(menu.clientWidth * 0.65, 160), behavior: "smooth" })
+		})
+		next.addEventListener("click", () => {
+			menu.scrollBy({ left: Math.max(menu.clientWidth * 0.65, 160), behavior: "smooth" })
+		})
+		menu.addEventListener("scroll", updateScrollState, { passive: true })
+		window.addEventListener("resize", updateScrollState, { passive: true })
+		requestAnimationFrame(updateScrollState)
+	}
+
+	document.addEventListener("astro:page-load", () => {
+		initFilter()
+		initFilterScroll()
+	})
 	initFilter()
+	initFilterScroll()
 </script>

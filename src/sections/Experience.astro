@@ -1,15 +1,21 @@
 ---
 import ExperienceCard from "@/components/cards/ExperienceCard.astro"
-import AutoGrid from "@/components/box/AutoGrid.astro"
 import Titles from "@/components/text/Titles.astro"
 import { EXPERIENCE } from "@/data/experience"
 import { SECTIONS } from "@/constants"
 ---
 
 <section id={SECTIONS.EXPERIENCE}>
-	<Titles title="Experiencia" subtitle="Mi experiencia laboral" />
+	<Titles title="Experiencia" subtitle="Responsabilidades reales, decisiones técnicas y resultados de producto." />
 
-	<AutoGrid>
+	<div class="experience-list">
 		{EXPERIENCE.map((item) => <ExperienceCard data={item} />)}
-	</AutoGrid>
+	</div>
 </section>
+
+<style>
+	.experience-list {
+		display: flex;
+		flex-direction: column;
+	}
+</style>

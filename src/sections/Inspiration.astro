@@ -6,80 +6,107 @@ import { SECTIONS } from "@/constants"
 ---
 
 <section id={SECTIONS.INSPIRATION}>
-	<Titles title="Inspiración" subtitle="Mis fuentes de inspiración" />
-	<div class="container">
-		<div class="texts-container">
-			<p>
-				Mi pasión por la programación <strong>comenzó a los 13 años</strong>,
-				inspirado por un familiar que programaba. Desde entonces, no he dejado
-				de aprender, motivado por un amor a primera vista por la tecnología.
+	<Titles
+		title="Lo que me mueve"
+		subtitle="Curiosidad, aprendizaje autodidacta y la convicción de que siempre se puede construir mejor."
+	/>
+
+	<div class="story-layout">
+		<article class="story">
+			<p class="lead">
+				Empecé a programar a los 13 años. Lo que comenzó como curiosidad se
+				convirtió en mi forma de entender y mejorar el mundo que me rodea.
 			</p>
 			<p>
-				Recibí apoyo y asistí a un politécnico para adentrarme en el mundo de la
-				informática, donde aprendí las bases del desarrollo web y la creación de
-				sitios desde cero. Mis primeros pasos fueron con <strong>HTML</strong>,
-				<strong>CSS</strong> y bases de datos con <strong>SQL</strong> y <strong
-					>SQL Server</strong
-				>. Luego, aprendí <strong>PHP</strong> y desarrollé pequeños scripts para
-				manejar formularios y mostrar datos en páginas web.
+				En el politécnico aprendí las bases con HTML, CSS, SQL y PHP. Durante
+				2020 profundicé de forma autodidacta, probando tecnologías,
+				equivocándome y construyendo proyectos hasta comprender cómo encajan
+				todas las piezas.
 			</p>
 			<p>
-				Disfrutaba de la sana competencia con mis compañeros y formé vínculos
-				con personas afines, compartiendo conocimientos y aprendiendo juntos.
-				Sin embargo, el politécnico no satisfacía mi sed de conocimiento.
-				<strong>Durante la pandemia de 2020</strong>, aproveché la oportunidad
-				de aprender de forma <strong>autodidacta</strong>, explorando múltiples
-				tecnologías para mejorar como desarrollador.
+				Hoy sigo aprendiendo con la misma intención: crear software claro,
+				útil y capaz de marcar una diferencia real para quien lo utiliza.
 			</p>
-			<p>
-				No todo fue fácil; enfrenté frustraciones y ansiedades al no entender
-				ciertos conceptos y <strong
-					>lidiar con un mercado laboral desafiante</strong
-				>. A pesar de las dificultades, seguí adelante con el apoyo de personas
-				que me alentaron a no rendirme.
-			</p>
-			<p>
-				A día de hoy, sigo aprendiendo y mejorando mis habilidades, inspirado
-				por personas que admiro y que han logrado grandes cosas en el mundo de
-				la programación y TI. Mi objetivo es seguir creciendo y convertirme en
-				un desarrollador de software de renombre que
-				<strong> marque la diferencia</strong>.
-			</p>
-		</div>
+
+			<dl class="moments">
+				<div>
+					<dt>13 años</dt>
+					<dd>Primer contacto con el código</dd>
+				</div>
+				<div>
+					<dt>2020</dt>
+					<dd>Aprendizaje autodidacta</dd>
+				</div>
+				<div>
+					<dt>Hoy</dt>
+					<dd>Construir, compartir y mejorar</dd>
+				</div>
+			</dl>
+		</article>
 
 		<Slider data={PEOPLE} client:visible />
 	</div>
 </section>
 
 <style>
-	p {
-		text-wrap: pretty;
+	.story-layout {
+		display: grid;
+		grid-template-columns: minmax(0, 0.85fr) minmax(26rem, 1.15fr);
+		align-items: start;
+		gap: clamp(3rem, 8vw, 7rem);
 	}
 
-	.container {
-		display: flex;
-		gap: var(--gap-2);
-		justify-content: space-between;
+	.story {
+		position: sticky;
+		top: calc(var(--header-height) + 2rem);
 	}
 
-	.texts-container {
-		width: 100%;
-		display: flex;
-		flex-direction: column;
-		gap: 16px;
+	.story > p {
+		max-width: 59ch;
+		margin-bottom: 1.25rem;
 	}
 
-	@media (max-width: 1200px) {
-		.container {
-			flex-direction: column;
+	.story .lead {
+		color: var(--title-color);
+		font-size: clamp(1.35rem, 2.4vw, 2rem);
+		font-weight: 500;
+		line-height: 1.45;
+		letter-spacing: -0.02em;
+	}
+
+	.moments {
+		display: grid;
+		margin-top: 2.5rem;
+		border-top: 1px solid var(--border-color);
+	}
+
+	.moments div {
+		display: grid;
+		grid-template-columns: 5.5rem minmax(0, 1fr);
+		gap: 1rem;
+		padding: 0.9rem 0;
+		border-bottom: 1px solid var(--border-color);
+	}
+
+	.moments dt {
+		color: var(--first-color);
+		font-family: "Cascadia Code", monospace;
+		font-size: 0.75rem;
+	}
+
+	.moments dd {
+		color: var(--title-color);
+		font-size: 0.85rem;
+		font-weight: 500;
+	}
+
+	@media (max-width: 900px) {
+		.story-layout {
+			grid-template-columns: 1fr;
 		}
 
-		.texts-container {
-			align-items: center;
-		}
-
-		p {
-			max-width: 998px;
+		.story {
+			position: static;
 		}
 	}
 </style>

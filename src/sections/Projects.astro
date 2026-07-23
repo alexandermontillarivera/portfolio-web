@@ -1,15 +1,41 @@
 ---
 import ProjectCard from "@/components/cards/ProjectCard.astro"
-import AutoGrid from "@/components/box/AutoGrid.astro"
 import Titles from "@/components/text/Titles.astro"
 import { PROJECTS } from "@/data/project"
 import { SECTIONS } from "@/constants"
 ---
 
 <section id={SECTIONS.PROJECTS}>
-	<Titles title="Proyectos" subtitle="Algunos de mis proyectos personales" />
+	<Titles title="Proyectos" subtitle="Una selección breve de productos que he construido." />
 
-	<AutoGrid>
-		{PROJECTS.map((item) => <ProjectCard data={item} />)}
-	</AutoGrid>
+	<div class="projects-grid">
+		{PROJECTS.map((item, index) => <ProjectCard data={item} featured={index === 0} />)}
+	</div>
 </section>
+
+<style>
+	.projects-grid {
+		display: grid;
+		grid-template-columns: repeat(12, 1fr);
+		gap: clamp(1.5rem, 3vw, 2.5rem);
+	}
+
+	.projects-grid :global(.project-card) {
+		grid-column: span 6;
+	}
+
+	.projects-grid :global(.project-card:first-child) {
+		grid-column: 1 / -1;
+	}
+
+	@media (max-width: 760px) {
+		.projects-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.projects-grid :global(.project-card),
+		.projects-grid :global(.project-card:first-child) {
+			grid-column: auto;
+		}
+	}
+</style>

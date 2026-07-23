@@ -1,15 +1,37 @@
 ---
 import EducationCard from "@/components/cards/EducationCard.astro"
-import AutoGrid from "@/components/box/AutoGrid.astro"
 import Titles from "@/components/text/Titles.astro"
 import { EDUCATION } from "@/data/education"
 import { SECTIONS } from "@/constants"
 ---
 
 <section id={SECTIONS.EDUCATION}>
-	<Titles title="Educación" subtitle="Mi formación académica" />
+	<Titles title="Formación" subtitle="Aprendizaje formal y continuo para construir con mejores fundamentos." />
 
-	<AutoGrid>
+	<div class="education-grid">
 		{EDUCATION.map((item) => <EducationCard data={item} />)}
-	</AutoGrid>
+	</div>
 </section>
+
+<style>
+	.education-grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 1rem;
+		align-items: stretch;
+	}
+
+	.education-grid :global(.education-card:first-child) {
+		grid-column: 1 / -1;
+	}
+
+	@media (max-width: 760px) {
+		.education-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.education-grid :global(.education-card:first-child) {
+			grid-column: auto;
+		}
+	}
+</style>
