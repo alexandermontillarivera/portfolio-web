@@ -27,6 +27,8 @@ nothing is playing or Spotify is unavailable.
 - Filterable technical-skills directory.
 - Responsive inspiration carousel with normalized imagery.
 - Floating Spotify now-playing widget with a persistent minimized state.
+- Progressive WebMCP tools for agent-readable portfolio data and navigation.
+- Optional on-device portfolio chat powered by Chrome's Prompt API.
 - Scroll-progress button for quickly returning to the top of the page.
 - Optional WordPress.com blog integration.
 - Vercel Analytics and Speed Insights.
@@ -43,7 +45,7 @@ nothing is playing or Spotify is unavailable.
 | Typography | Poppins and Cascadia Code |
 | Deployment | [Vercel](https://vercel.com/) |
 | Analytics | Vercel Analytics and Speed Insights |
-| External integrations | Spotify Web API and WordPress.com REST API |
+| External integrations | WebMCP, Chrome Prompt API, Spotify Web API, and WordPress.com REST API |
 
 ## Project Structure
 
@@ -69,12 +71,42 @@ portfolio-web/
 │   │   ├── 404.astro
 │   │   └── index.astro
 │   ├── sections/              # Main portfolio sections
+│   ├── scripts/               # Client-side WebMCP tool registration
 │   ├── services/              # Spotify and WordPress services
 │   └── utils/                 # HTTP, HTML, and string utilities
 ├── astro.config.mjs
 ├── package.json
 └── .env.example
 ```
+
+## WebMCP Support
+
+In browsers that implement the proposed WebMCP API, the portfolio registers
+client-side tools through `document.modelContext`. Agents can:
+
+- Read the public professional profile.
+- Search the project catalog.
+- Read professional experience and education.
+- Retrieve public contact channels and the resume URL.
+- Navigate to a portfolio section.
+
+All data tools are marked as read-only. Registration is progressive, requires no
+environment variables, and is skipped without affecting the site when the API
+is unavailable.
+
+## On-device AI Chat
+
+The floating portfolio assistant uses Chrome's Prompt API and only appears when
+`LanguageModel.availability()` confirms that the browser and device are
+compatible. When a session starts, the assistant reads the current semantic
+content and links from the page DOM, so its answers stay aligned with the
+portfolio without maintaining a separate copy of the site's content. It
+supports stopping and clearing a conversation and reports model-download
+progress when Chrome needs to install its local model.
+
+Messages are processed by the browser's built-in model and are not sent to this
+project's server. Unsupported browsers receive the standard portfolio without a
+placeholder or unavailable-feature message.
 
 ## Requirements
 

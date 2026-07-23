@@ -168,7 +168,7 @@ const { hideMenuItems = false } = Astro.props
 			animationFrame = requestAnimationFrame(tick)
 		}
 
-		const handleIntersection = (entries) => {
+		const handleIntersection = (entries: IntersectionObserverEntry[]) => {
 			const visibleSections = entries
 				.filter((entry) => {
 					const rect = entry.boundingClientRect
@@ -295,7 +295,7 @@ const { hideMenuItems = false } = Astro.props
 			menuRoot.classList.contains("showMenu") ? closeMenu() : openMenu()
 		}
 
-		const handleClickOutside = (event) => {
+		const handleClickOutside = (event: MouseEvent) => {
 			const target = event.target
 			if (target === blurOverlay && menuRoot?.classList.contains("showMenu")) {
 				closeMenu()
