@@ -20,7 +20,8 @@ interface ModelContext {
 	registerTool: (
 		tool: WebMCPTool,
 		options?: { signal?: AbortSignal; exposedTo?: string[] },
-	) => Promise<void>
+	) => Promise<undefined>
+	getTools?: () => Promise<unknown[]>
 }
 
 declare global {
@@ -28,8 +29,13 @@ declare global {
 		modelContext?: ModelContext
 	}
 
+	interface Navigator {
+		modelContext?: ModelContext
+	}
+
 	interface Window {
 		portfolioWebMCPController?: AbortController
+		portfolioWebMCPRegistration?: Promise<number>
 	}
 }
 
@@ -252,26 +258,67 @@ const tools: WebMCPTool[] = [
 	},
 ]
 
-const registerWebMCPTools = async () => {
-	const modelContext = document.modelContext
-	if (!modelContext?.registerTool) return
+const registerWebMCPTools = (): Promise<number> | undefined => {
+	if (window.portfolioWebMCPRegistration) {
+		return window.portfolioWebMCPRegistration
+	}
 
-	window.portfolioWebMCPController?.abort()
+	const modelContext = document.modelContext ?? navigator.modelContext
+	if (!modelContext?.registerTool) {
+		console.info(
+			"WebMCP: la API no está disponible. Activa la prueba de origen o la función experimental de Chrome.",
+		)
+		return
+	}
+
 	const controller = new AbortController()
 	window.portfolioWebMCPController = controller
 
-	const registrations = tools.map((tool) =>
-		modelContext.registerTool(tool, { signal: controller.signal }),
-	)
-	const results = await Promise.allSettled(registrations)
+	const registration = (async () => {
+		let registeredCount = 0
 
-	const failed = results.filter((result) => result.status === "rejected")
-	if (failed.length > 0 && !controller.signal.aborted) {
-		console.warn(
-			`WebMCP: ${failed.length} herramienta(s) no pudieron registrarse.`,
-		)
-	}
+		for (const tool of tools) {
+			try {
+				await modelContext.registerTool(tool, {
+					signal: controller.signal,
+				})
+				registeredCount += 1
+			} catch (error) {
+				console.error(
+					`WebMCP: no se pudo registrar "${tool.name}".`,
+					error,
+				)
+			}
+		}
+
+		if (registeredCount === 0) {
+			window.portfolioWebMCPRegistration = undefined
+			return 0
+		}
+
+		if (modelContext.getTools) {
+			try {
+				const availableTools = await modelContext.getTools()
+				console.info(
+					`WebMCP: ${availableTools.length} herramienta(s) disponibles.`,
+				)
+			} catch (error) {
+				console.warn(
+					"WebMCP: las herramientas se registraron, pero no fue posible consultarlas.",
+					error,
+				)
+			}
+		}
+
+		return registeredCount
+	})()
+
+	window.portfolioWebMCPRegistration = registration
+	return registration
 }
 
-document.addEventListener("astro:page-load", registerWebMCPTools)
+document.addEventListener("astro:page-load", () => {
+	void registerWebMCPTools()
+})
+
 void registerWebMCPTools()
