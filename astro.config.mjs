@@ -5,7 +5,8 @@ import node from "@astrojs/node"
 const isDevelopmentServer = process.argv.includes("dev")
 
 export default defineConfig({
-	integrations: [react()],
+	site: "https://alexandermontillarivera.com",
+	integrations: [react(), sitemap()],
 	output: "server",
 	adapter: node({ mode: "standalone" }),
 	vite: {
