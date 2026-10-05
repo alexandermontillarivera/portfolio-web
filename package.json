@@ -8,6 +8,7 @@
     "check": "astro check",
     "build:preview": "npx astro build ./ --node",
     "preview": "npx astro preview --node",
+    "start": "node ./dist/server/entry.mjs",
     "spotify:auth": "node scripts/spotify-auth.mjs",
     "spotify:check": "node scripts/spotify-auth.mjs --check",
     "astro": "astro"
