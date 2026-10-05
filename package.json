@@ -6,8 +6,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "check": "astro check",
-    "build:preview": "npx astro build ./ --node",
-    "preview": "npx astro preview --node",
+    "preview": "astro preview",
     "start": "node ./dist/server/entry.mjs",
     "spotify:auth": "node scripts/spotify-auth.mjs",
     "spotify:check": "node scripts/spotify-auth.mjs --check",
@@ -16,7 +15,6 @@
   "dependencies": {
     "@astrojs/node": "^9.4.3",
     "@astrojs/react": "^4.3.1",
-    "@astrojs/vercel": "^8.2.7",
     "@fontsource/poppins": "5.2.7",
     "@tabler/icons-react": "3.35.0",
     "@types/react": "19.1.13",
