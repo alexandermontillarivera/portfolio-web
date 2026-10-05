@@ -1,6 +1,7 @@
 import { defineConfig } from "astro/config"
 import react from "@astrojs/react"
 import node from "@astrojs/node"
+import sitemap from "@astrojs/sitemap"
 
 const isDevelopmentServer = process.argv.includes("dev")
 
